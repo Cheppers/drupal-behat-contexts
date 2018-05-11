@@ -1,0 +1,9 @@
+
+default:
+    extensions:
+        Behat\MinkExtension:
+            base_url: 'http://localhost:8888'
+            sessions:
+                browserChrome:
+                    chrome:
+                        api_url: 'http://127.0.0.1:9222'
