@@ -1,7 +1,7 @@
-Feature: Some helpful description.
+Feature: Test steps in \Cheppers\DrupalExtension\Context\Drupal\CoreAjax
 
     @api @javascript
-    Scenario: Some helpful description.
+    Scenario: Wait for AJAX to finish
         Given I am logged in as a user with the "Administrator" role
         And I am on "/node/add/article"
         And I should not see an "[name='field_image[0][alt]']" element

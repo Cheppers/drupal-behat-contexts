@@ -1,7 +1,7 @@
-Feature: Some helpful description.
+Feature: Test steps from \Cheppers\DrupalExtension\Context\Drupal\CoreMenu
 
     @api @javascript
-    Scenario: Some helpful description.
+    Scenario: Assert menu links
         Given I am logged in as a user with the "Administrator" role
         And I am on the homepage
         Then I should see the following links in the "User account menu" menu:

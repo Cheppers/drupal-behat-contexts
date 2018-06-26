@@ -129,7 +129,7 @@
         "drupal-scaffold": "\\DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
         "prepare": "\\Cheppers\\DrupalExtensionDev\\Composer\\Scripts::prepare",
         "drupal:install": "drush --root='docroot' site:install --sites-subdir=default --db-url=sqlite://../sites/default/databases/default.sqlite --account-name=admin --account-pass=admin standard",
-        "http:start": "echo 'cd docroot && php -S localhost:8888 .ht.router.php &'",
+        "http:start": "echo 'cd docroot && php -S localhost:8888 .ht.router.php'",
         "test": [
             "@test:behat"
         ],

@@ -1,7 +1,7 @@
-Feature: Some helpful description.
+Feature: Test steps in \Cheppers\DrupalExtension\Context\Drupal\CoreCkeditor
 
   @api @javascript
-  Scenario: Some helpful description.
+  Scenario: Fill in a wysiwyg field
     Given I am logged in as a user with the "Administrator" role
     And I am on "/node/add/article"
     When I fill in "Title" with "My article 01"
