@@ -13,3 +13,4 @@ default:
                 success_message_selector: '.messages.messages--status'
                 warning_message_selector: '.messages.messages--warning'
                 error_message_selector: '.messages.messages--error'
+                drupal.core.vertical_tabs.tab_label__seven: 'xpath: //ul[@class="vertical-tabs__menu"]/li/a/strong[text() = "{{ tabLabel }}"]'

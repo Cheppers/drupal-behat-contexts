@@ -11,12 +11,12 @@ trait CoreThemeDetectorContextTrait
      */
     protected function getCurrentThemeName(): string
     {
-        $themeName = $this->getCurrentThemeNameByFavicon();
+        $themeName = $this->getCurrentThemeNameByAjaxPageState();
         if ($themeName) {
             return $themeName;
         }
 
-        $themeName = $this->getCurrentThemeNameByAjaxPageState();
+        $themeName = $this->getCurrentThemeNameByFavicon();
         if ($themeName) {
             return $themeName;
         }
@@ -30,6 +30,7 @@ trait CoreThemeDetectorContextTrait
     {
         $xpathQuery = '/head/link[@rel="shortcut icon"][@href]';
 
+        /** @var \Behat\Mink\Element\NodeElement $linkElement */
         $linkElement = $this
             ->getSession()
             ->getPage()
@@ -37,7 +38,8 @@ trait CoreThemeDetectorContextTrait
 
         Assert::assertNotEmpty($linkElement, 'The current theme cannot be detected');
 
-        $hrefParts = explode('/', $linkElement->getAttribute('href'));
+        $href = $linkElement->getAttribute('href');
+        $hrefParts = explode('/', $href);
         array_pop($hrefParts);
 
         return (string) end($hrefParts);
