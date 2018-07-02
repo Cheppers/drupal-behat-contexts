@@ -1,7 +1,7 @@
-Feature: Some helpful description.
+Feature: Test steps in \Cheppers\DrupalExtension\Context\Table
 
     @api @javascript
-    Scenario: Some helpful description.
+    Scenario: Click on link
         Given I am logged in as a user with the "Administrator" role
         And "page" content:
             | title      | status |

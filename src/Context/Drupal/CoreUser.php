@@ -2,6 +2,7 @@
 
 namespace Cheppers\DrupalExtension\Context\Drupal;
 
+use Behat\Gherkin\Node\TableNode;
 use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
 use Drupal\user\Entity\User;
@@ -10,6 +11,18 @@ use PHPUnit_Framework_Assert as Assert;
 class CoreUser extends Base
 {
     use CoreContentEntityContextTrait;
+
+    /**
+     * @Given user:
+     */
+    public function doAccountCreate(TableNode $fieldValues)
+    {
+        $entityTypeId = 'user';
+        $fieldValues = $fieldValues->getRowsHash();
+        $fieldValues = $this->keyValuePairsToNestedArray($fieldValues);
+
+        $this->createContentEntity($entityTypeId, $this->keyValuePairsToNestedArray($fieldValues));
+    }
 
     /**
      * @Given /^the "(?P<accountLabel>[^"]+)" account is deleted with "(?P<cancelMethodLabel>[^"]+)" cancel method$/

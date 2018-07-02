@@ -4,18 +4,14 @@ namespace Cheppers\DrupalExtension\Component\Drupal;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\field\Entity\FieldStorageConfig;
-use Wikimedia\Composer\Merge\NestedArray;
 
 trait CoreContentEntityContextTrait
 {
-    /**
-     * @return null|\Drupal\Core\Entity\ContentEntityInterface
-     */
     protected function getContentEntityByLabel(
         string $entityTypeId,
         string $label,
         string $fieldName = ''
-    ) {
+    ): ?ContentEntityInterface {
         $etm = \Drupal::entityTypeManager();
         $storage = $etm->getStorage($entityTypeId);
         $entityType = $etm->getDefinition($entityTypeId);
@@ -170,8 +166,7 @@ trait CoreContentEntityContextTrait
         $values = [];
         foreach ($keyValuePairs as $keyParts => $value) {
             $parents = explode(':', $keyParts);
-
-            $values = NestedArray::mergeDeep($values, $this->buildNestedArray($parents, $value));
+            $values = array_replace_recursive($values, $this->buildNestedArray($parents, $value));
         }
 
         return $values;

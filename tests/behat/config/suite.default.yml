@@ -20,6 +20,7 @@ default:
                 - '\Cheppers\DrupalExtension\Context\Drupal\CoreMenu'
                 - '\Cheppers\DrupalExtension\Context\Drupal\CoreSystem'
                 - '\Cheppers\DrupalExtension\Context\Drupal\CoreTabs'
+                - '\Cheppers\DrupalExtension\Context\Drupal\CoreUser'
                 - '\Cheppers\DrupalExtension\Context\Table'
             paths:
                 features: '%paths.base%/features'
