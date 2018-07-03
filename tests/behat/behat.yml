@@ -12,7 +12,7 @@ imports:
 default:
     testers:
         strict: true
-        rerun_cache: 'tmp/behat_rerun_cache'
+        rerun_cache: '../../tmp/behat_rerun_cache'
 
     exceptions:
         verbosity: 4

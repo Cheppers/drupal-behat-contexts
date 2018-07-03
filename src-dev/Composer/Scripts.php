@@ -325,6 +325,7 @@ PHP;
     protected static function prepareBehat()
     {
         static::prepareBehatLocalYml();
+        static::prepareBehatRerunCacheDir();
     }
 
     protected static function prepareBehatLocalYml()
@@ -340,6 +341,11 @@ PHP;
 
         $dst = 'tests/behat/behat.local.yml';
         static::$fs->dumpFile($dst, strtr($content, $replacePairs));
+    }
+
+    protected static function prepareBehatRerunCacheDir()
+    {
+        static::$fs->mkdir('tmp/behat_rerun_cache');
     }
 
     protected static function generateHashSalt(): string
