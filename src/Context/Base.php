@@ -2,15 +2,27 @@
 
 namespace Cheppers\DrupalExtension\Context;
 
-use Cheppers\DrupalExtension\Component\Drupal\CoreThemeDetectorContextTrait;
+use Cheppers\DrupalExtension\ThemeDetectorInterface;
 use NuvoleWeb\Drupal\DrupalExtension\Context\RawDrupalContext;
 use PHPUnit_Framework_Assert as Assert;
 
 class Base extends RawDrupalContext
 {
-    use CoreThemeDetectorContextTrait;
 
+    /**
+     * @var array
+     */
     protected $finders = [];
+
+    /**
+     * @var null|\Cheppers\DrupalExtension\ThemeDetectorInterface
+     */
+    protected $themeDetector;
+
+    protected function getThemeDetector(): ThemeDetectorInterface
+    {
+        return $this->themeDetector ?? $this->getContainer()->get('cheppers.behat.theme_detector');
+    }
 
     public function __construct()
     {
@@ -62,9 +74,13 @@ class Base extends RawDrupalContext
      */
     protected function getFinderNameSuggestions(string $finderName): array
     {
+        $currentThemeName = $this
+            ->getThemeDetector()
+            ->getCurrentThemeName($this->getSession());
+
         // @todo Parent themes.
         return [
-            "{$finderName}__" . $this->getCurrentThemeName(),
+            "{$finderName}__{$currentThemeName}",
             $finderName,
         ];
     }

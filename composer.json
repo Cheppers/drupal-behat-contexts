@@ -1,6 +1,6 @@
 {
-    "name": "cheppers/drupal-behat-subcontexts",
-    "description": "Drupal\\Extension related subcontexts",
+    "name": "cheppers/drupal-behat-contexts",
+    "description": "Drupal\\Extension related contexts",
     "type": "library",
     "license": "MIT",
     "minimum-stability": "dev",

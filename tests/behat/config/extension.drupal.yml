@@ -8,6 +8,7 @@ default:
                 drupal_root: '%paths.base%/../../docroot/'
             blackbox: ~
             api_driver: 'drupal'
+            services: 'services.yml'
             selectors:
                 message_selector: '.messages'
                 success_message_selector: '.messages.messages--status'

@@ -7,5 +7,4 @@ Feature: Test steps in \Cheppers\DrupalExtension\Context\Drupal\CoreTabs
         When I click "My account" in the "User account menu" menu
         Then I should see the following primary tabs:
             | View(active tab) |
-            | Shortcuts        |
             | Edit             |

@@ -1,14 +1,23 @@
 <?php
 
-namespace Cheppers\DrupalExtension\Component\Drupal;
+namespace Cheppers\DrupalExtension;
 
-trait CoreThemeDetectorContextTrait
+class ThemeDetector implements ThemeDetectorInterface
 {
     /**
+     * @var \Behat\Mink\Session
+     */
+    protected $session;
+
+    /**
+     * {@inheritdoc}
+     *
      * @todo The current detection method is not bulletproof.
      */
-    protected function getCurrentThemeName(): string
+    public function getCurrentThemeName(\Behat\Mink\Session $session): string
     {
+        $this->session = $session;
+
         $themeName = $this->getCurrentThemeNameByFavicon();
 
         if (!$themeName) {
@@ -30,9 +39,7 @@ trait CoreThemeDetectorContextTrait
     {
         $xpathQuery = '/head/link[@rel="shortcut icon"][@href]';
 
-        /** @var \Behat\Mink\Session $session */
-        $session = $this->getSession();
-        $page = $session->getPage();
+        $page = $this->session->getPage();
         $linkElement = $page->find('xpath', $xpathQuery);
 
         if (!$linkElement) {
@@ -60,16 +67,14 @@ if (typeof drupalSettings !== 'undefined' && drupalSettings.hasOwnProperty('ajax
 return '';
 JS;
 
-        return (string) $this->getSession()->evaluateScript($js);
+        return (string) $this->session->evaluateScript($js);
     }
 
     protected function getCurrentThemeNameByLogo(): string
     {
         $xpathQuery = '//a[@href="/"]/img[contains(@src, "/logo.svg")]';
 
-        /** @var \Behat\Mink\Session $session */
-        $session = $this->getSession();
-        $page = $session->getPage();
+        $page = $this->session->getPage();
         $imgElement = $page->find('xpath', $xpathQuery);
 
         if (!$imgElement) {
