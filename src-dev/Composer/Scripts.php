@@ -4,6 +4,7 @@ namespace Cheppers\DrupalExtensionDev\Composer;
 
 use Composer\Script\Event;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 class Scripts
 {
@@ -16,6 +17,11 @@ class Scripts
     /**
      * @var string
      */
+    protected static $binDir = 'bin';
+
+    /**
+     * @var string
+     */
     protected static $docroot = 'docroot';
 
     /**
@@ -24,15 +30,76 @@ class Scripts
     protected static $sitesDir = 'default';
 
     /**
+     * @var string
+     */
+    protected static $installProfile = 'standard';
+
+    /**
      * @var \Symfony\Component\Filesystem\Filesystem
      */
     protected static $fs;
+
+    /**
+     * @var \Closure
+     */
+    protected static $processCallbackWrapper;
 
     public static function prepare(Event $event)
     {
         static::init($event);
         static::prepareDrupal();
         static::prepareBehat();
+    }
+
+    public static function drupalInstall(Event $event)
+    {
+        static::init($event);
+        static::drupalInstallDoIt();
+    }
+
+    protected static function drupalInstallDoIt()
+    {
+        $drushExecutable = static::$binDir . '/drush';
+
+        $drushBase = sprintf(
+            '%s --no-interaction --ansi --root=%s',
+            escapeshellcmd($drushExecutable),
+            escapeshellarg(static::$docroot)
+        );
+
+        $cmdPattern = [];
+        $cmdArgs = [];
+
+        $cmdPattern[] = "$drushBase site:install %s --sites-subdir=%s --db-url=%s --account-name=%s --account-pass=%s";
+        $cmdArgs[] = escapeshellarg(static::$installProfile);
+        $cmdArgs[] = escapeshellarg(static::$sitesDir);
+        $cmdArgs[] = escapeshellarg('sqlite://../sites/default/databases/default.sqlite');
+        $cmdArgs[] = escapeshellarg('admin');
+        $cmdArgs[] = escapeshellarg('admin');
+
+        $cmdPattern[] = "$drushBase config:set system.site uuid %s";
+        $cmdArgs[] = escapeshellarg('db620b15-2d48-4796-8e81-1aa32ca1df5c');
+
+        $cmdPattern[] = "$drushBase entity:delete %s";
+        $cmdArgs[] = escapeshellarg('shortcut');
+
+        $cmdPattern[] = "$drushBase config:import";
+
+        $command = vsprintf(implode(' && ', $cmdPattern), $cmdArgs);
+        static::$event->getIO()->write($command);
+
+        $process = new Process(
+            $command,
+            null,
+            null,
+            null,
+            300
+        );
+
+        $exitCode = $process->run(static::$processCallbackWrapper);
+        if ($exitCode !== 0) {
+            throw new \Exception($process->getErrorOutput(), $exitCode);
+        }
     }
 
     protected static function getSitesDirPath(): string
@@ -57,6 +124,9 @@ class Scripts
     {
         static::$event = $event;
         static::$fs = new Filesystem();
+        static::$processCallbackWrapper = function (string $type, string $text) {
+            static::processCallback($type, $text);
+        };
     }
 
     protected static function prepareDrupal()
@@ -307,6 +377,7 @@ PHP;
 
     protected static function prepareDrupalInstallProfile()
     {
+        $installProfileSafe = var_export(static::$installProfile);
         $replacePairs = [];
 
         $placeholder = <<< 'PHP'
@@ -314,9 +385,9 @@ PHP;
 # $settings['install_profile'] = '';
 
 PHP;
-        $replacePairs[$placeholder] = <<< 'PHP'
+        $replacePairs[$placeholder] = <<< PHP
 
-$settings['install_profile'] = 'standard';
+\$settings['install_profile'] = $installProfileSafe;
 
 PHP;
 
@@ -364,6 +435,18 @@ PHP;
 
         $content = file_get_contents($fileName);
         static::assertFileContent($fileName, $content);
+
+        $dirName = dirname($fileName);
+        if (!static::$fs->exists($dirName)) {
+            static::$fs->mkdir($dirName);
+        }
+
+        $mask = umask();
+        static::$fs->chmod($dirName, 0777, $mask);
+        if (static::$fs->exists($fileName)) {
+            static::$fs->chmod($fileName, 0666, $mask);
+        }
+
         static::$fs->dumpFile($fileName, strtr($content, $replacePairs));
     }
 
@@ -380,7 +463,18 @@ PHP;
     protected static function assertFileContent(string $fileName, $content)
     {
         if ($content === false) {
-            throw new \Exception(sprintf('Failed to red from file: "%s"', $fileName), 1);
+            throw new \Exception(sprintf('Failed to read from file: "%s"', $fileName), 1);
         }
+    }
+
+    protected static function processCallback(string $type, string $text)
+    {
+        if ($type === Process::OUT) {
+            static::$event->getIO()->write($text, false);
+
+            return;
+        }
+
+        static::$event->getIO()->writeError($text, false);
     }
 }
