@@ -41,7 +41,8 @@ class CodeCoverageContext extends RawMinkContext
         (new Filesystem())->remove(static::getReportsDirByReaders($scope));
     }
 
-    protected static function getProjectRoot(): string {
+    protected static function getProjectRoot(): string
+    {
         return __DIR__ . '/../..';
     }
 

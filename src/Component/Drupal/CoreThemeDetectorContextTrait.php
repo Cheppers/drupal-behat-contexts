@@ -2,8 +2,6 @@
 
 namespace Cheppers\DrupalExtension\Component\Drupal;
 
-use PHPUnit_Framework_Assert as Assert;
-
 trait CoreThemeDetectorContextTrait
 {
     /**

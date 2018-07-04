@@ -279,7 +279,8 @@ PHP;
         static::fileContentReplace(static::getSitesDirPath() . '/settings.local.php', $replacePairs);
     }
 
-    protected static function prepareDrupalTrustedHostPatterns() {
+    protected static function prepareDrupalTrustedHostPatterns()
+    {
         $httpHostname = getenv('APP_HTTP_HOSTNAME') ?: 'localhost';
         $httpHostnameSafe = preg_quote($httpHostname);
         $replacePairs = [];
@@ -366,11 +367,13 @@ PHP;
         static::$fs->dumpFile($fileName, strtr($content, $replacePairs));
     }
 
-    protected static function getHttpHostnamePort(): string {
+    protected static function getHttpHostnamePort(): string
+    {
         return getenv('APP_HTTP_HOSTNAME_PORT') ?: 'localhost:8888';
     }
 
-    protected static function getChromiumHostnamePort(): string {
+    protected static function getChromiumHostnamePort(): string
+    {
         return getenv('APP_CHROMIUM_HOSTNAME_PORT') ?: '127.0.0.1:9222';
     }
 

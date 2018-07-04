@@ -4,6 +4,7 @@
     xsi:noNamespaceSchemaLocation="./vendor/squizlabs/php_codesniffer/phpcs.xsd"
     name="Custom">
     <file>src/</file>
+    <file>src-dev/</file>
 
     <rule ref="PSR2"/>
 
