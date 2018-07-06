@@ -3,7 +3,10 @@
 /docroot/
 /tests/behat/behat.local.yml
 /reports/
-/sites/*
-!/sites/*/config/
+
+/sites/*/databases/
+/sites/*/private/
+/sites/*/hash_salt.txt
+
 /tmp/
 /vendor/
