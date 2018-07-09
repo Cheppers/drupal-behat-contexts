@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c72f821e4cade68fa47da872a46dc84",
+    "content-hash": "e8f9a932658f47a4fa15e27d071d874c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1448,7 +1448,7 @@
                     "dev-master": "4.0.x-dev"
                 },
                 "patches_applied": {
-                    "Behat config schema - extendable selectors and text": "patches/drupal/drupal-extension/behat_config_schema.extendable_selectors.patch"
+                    "Behat config schema - extendable selectors and text": "https://patch-diff.githubusercontent.com/raw/jhedstrom/drupalextension/pull/494.patch"
                 }
             },
             "autoload": {

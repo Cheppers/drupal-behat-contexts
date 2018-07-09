@@ -25,7 +25,7 @@
         "php": ">=7.1",
         "ext-pcre": "*",
         "cweagans/composer-patches": "^1.6",
-        "drupal/drupal-extension": "^3.4",
+        "drupal/drupal-extension": "~3.3",
         "nuvoleweb/drupal-behat": "^1.1",
         "webmozart/path-util": "^2.3"
     },
@@ -41,7 +41,7 @@
         "drush/drush": "^9.2",
         "jarnaiz/behat-junit-formatter": "^1.3",
         "phpunit/php-code-coverage": "^4.0",
-        "phpunit/phpunit": "^5.6",
+        "phpunit/phpunit": "^5.6 || ^6.5",
         "squizlabs/php_codesniffer": "^3.2",
         "symfony/filesystem": "^2.8 || ^3.4 || ^4.0"
     },
@@ -61,7 +61,7 @@
         "composer-exit-on-patch-failure": true,
         "patches": {
             "drupal/drupal-extension": {
-                "Behat config schema - extendable selectors and text": "patches/drupal/drupal-extension/behat_config_schema.extendable_selectors.patch"
+                "Behat config schema - extendable selectors and text": "https://patch-diff.githubusercontent.com/raw/jhedstrom/drupalextension/pull/494.patch"
             },
             "nuvoleweb/drupal-behat": {
                 "context compatibility": "patches/nuvoleweb/drupal-behat/context-compatibility.patch"
