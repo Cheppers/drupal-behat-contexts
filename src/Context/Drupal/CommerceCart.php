@@ -7,7 +7,7 @@ use Behat\Mink\Exception\ElementNotFoundException;
 use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Component\XpathContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 class CommerceCart extends Base
 {

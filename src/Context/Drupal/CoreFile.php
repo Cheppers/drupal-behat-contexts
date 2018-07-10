@@ -6,7 +6,7 @@ use Behat\Gherkin\Node\TableNode;
 use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
 use Drupal\file\FileInterface;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 use Webmozart\PathUtil\Path;
 
 class CoreFile extends Base

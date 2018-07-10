@@ -6,7 +6,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ExpectationException;
 use Cheppers\DrupalExtension\Context\Base;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 class CoreFormCheckboxes extends Base
 {

@@ -7,7 +7,7 @@ use Behat\Mink\Exception\ElementNotFoundException;
 use Cheppers\DrupalExtension\Component\ClickElementContextTrait;
 use Cheppers\DrupalExtension\Component\ScrollToElementContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 /**
  * Before drupal/core:8.4 there were dropdown buttons on the node edit form.

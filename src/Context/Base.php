@@ -4,7 +4,7 @@ namespace Cheppers\DrupalExtension\Context;
 
 use Cheppers\DrupalExtension\ThemeDetectorInterface;
 use NuvoleWeb\Drupal\DrupalExtension\Context\RawDrupalContext;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 class Base extends RawDrupalContext
 {

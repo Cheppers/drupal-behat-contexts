@@ -5,7 +5,7 @@ namespace Cheppers\DrupalExtension\Context\Drupal;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Cheppers\DrupalExtension\Context\Base;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 class CoreMenu extends Base
 {

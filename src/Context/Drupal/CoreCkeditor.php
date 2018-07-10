@@ -3,7 +3,7 @@
 namespace Cheppers\DrupalExtension\Context\Drupal;
 
 use Cheppers\DrupalExtension\Context\Base;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 class CoreCkeditor extends Base
 {

@@ -6,7 +6,7 @@ use Behat\Gherkin\Node\TableNode;
 use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
 use Drupal\user\Entity\User;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 class CoreUser extends Base
 {

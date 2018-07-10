@@ -6,7 +6,7 @@ use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
 use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_order\Entity\OrderInterface;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 class CommerceOrder extends Base
 {

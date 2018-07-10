@@ -7,7 +7,7 @@ use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 class CoreTabs extends Base
 {

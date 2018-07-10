@@ -2,7 +2,7 @@
 
 namespace Cheppers\DrupalExtension\Component;
 
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 use WebDriver\Exception\ElementIsNotSelectable;
 
 trait XpathContextTrait

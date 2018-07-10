@@ -7,7 +7,7 @@ use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Component\Drupal\CoreEntityFormContextTrait;
 use Cheppers\DrupalExtension\Component\ScrollToElementContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
-use PHPUnit_Framework_Assert as Assert;
+use PHPUnit\Framework\Assert;
 
 class InlineEntityForm extends Base
 {
