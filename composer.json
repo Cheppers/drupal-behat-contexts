@@ -64,7 +64,7 @@
                 "Behat config schema - extendable selectors and text": "https://patch-diff.githubusercontent.com/raw/jhedstrom/drupalextension/pull/494.patch"
             },
             "nuvoleweb/drupal-behat": {
-                "context compatibility": "patches/nuvoleweb/drupal-behat/context-compatibility.patch"
+                "context compatibility": "https://patch-diff.githubusercontent.com/raw/nuvoleweb/drupal-behat/pull/34.patch"
             }
         },
         "installer-types": [
