@@ -53,11 +53,11 @@ class CoreMenu extends Base
         foreach ($actualLinkElements as $delta => $actualLinkElement) {
             Assert::assertSame(
                 $expectedLinkLabels[$delta],
-                $actualLinkElement->getText(),
+                $actualLinkElement->getHtml(),
                 sprintf(
                     'Expected link title is "%s". Actual: "%s"',
                     $expectedLinkLabels[$delta],
-                    $actualLinkElement->getText()
+                    $actualLinkElement->getHtml()
                 )
             );
         }
