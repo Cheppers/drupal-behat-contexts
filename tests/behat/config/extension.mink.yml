@@ -1,0 +1,16 @@
+
+default:
+    extensions:
+        Behat\MinkExtension:
+            files_path: '%paths.base%/media'
+            base_url: 'http://localhost:8888'
+            browser_name: 'chrome'
+            default_session: 'goutte'
+            javascript_session: 'browserChrome'
+            goutte: ~
+            sessions:
+                default:
+                    goutte: ~
+                browserChrome:
+                    chrome:
+                        api_url: 'http://127.0.0.1:9222'

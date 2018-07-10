@@ -1,0 +1,12 @@
+
+/bin/
+/docroot/
+/tests/behat/behat.local.yml
+/reports/
+
+/sites/*/databases/
+/sites/*/private/
+/sites/*/hash_salt.txt
+
+/tmp/
+/vendor/
