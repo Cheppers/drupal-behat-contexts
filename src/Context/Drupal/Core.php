@@ -49,6 +49,6 @@ class Core extends Base
      */
     public function assertPageIsThemedBy(string $themeName)
     {
-        Assert::assertSame($themeName, $this->getCurrentThemeName());
+        Assert::assertSame($themeName, $this->getThemeDetector()->getCurrentThemeName($this->getSession()));
     }
 }
