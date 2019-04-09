@@ -3,6 +3,7 @@
 namespace Cheppers\DrupalExtensionDev\Composer;
 
 use Composer\Script\Event;
+use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
@@ -104,12 +105,12 @@ class Scripts
             null,
             null,
             null,
-            300
+            null
         );
 
         $exitCode = $process->run(static::$processCallbackWrapper);
         if ($exitCode !== 0) {
-            throw new \Exception($process->getErrorOutput(), $exitCode);
+            throw new Exception($process->getErrorOutput(), $exitCode);
         }
     }
 
@@ -474,7 +475,7 @@ PHP;
     protected static function assertFileContent(string $fileName, $content)
     {
         if ($content === false) {
-            throw new \Exception(sprintf('Failed to read from file: "%s"', $fileName), 1);
+            throw new Exception(sprintf('Failed to read from file: "%s"', $fileName), 1);
         }
     }
 
