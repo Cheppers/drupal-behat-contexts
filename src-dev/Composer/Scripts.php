@@ -70,22 +70,33 @@ class Scripts
         $cmdPattern = [];
         $cmdArgs = [];
 
-        $cmdPattern[] = "$drushBase site:install %s --sites-subdir=%s --db-url=%s --account-name=%s --account-pass=%s";
+        $cmdPattern[] = "$drushBase site:install %s";
         $cmdArgs[] = escapeshellarg(static::$installProfile);
+
+
+        $cmdPattern[] = '--sites-subdir=%s';
         $cmdArgs[] = escapeshellarg(static::$sitesDir);
+
+        $cmdPattern[] = '--db-url=%s';
         $cmdArgs[] = escapeshellarg('sqlite://../sites/default/databases/default.sqlite');
+
+
+        $cmdPattern[] = '--account-name=%s --account-pass=%s';
         $cmdArgs[] = escapeshellarg('admin');
         $cmdArgs[] = escapeshellarg('admin');
 
+        $cmdPattern[] = '&&';
         $cmdPattern[] = "$drushBase config:set system.site uuid %s";
         $cmdArgs[] = escapeshellarg('db620b15-2d48-4796-8e81-1aa32ca1df5c');
 
+        $cmdPattern[] = '&&';
         $cmdPattern[] = "$drushBase entity:delete %s";
         $cmdArgs[] = escapeshellarg('shortcut');
 
+        $cmdPattern[] = '&&';
         $cmdPattern[] = "$drushBase config:import";
 
-        $command = vsprintf(implode(' && ', $cmdPattern), $cmdArgs);
+        $command = vsprintf(implode(' ', $cmdPattern), $cmdArgs);
         static::$event->getIO()->write($command);
 
         $process = new Process(
