@@ -16,6 +16,6 @@ class Chrome extends Base
     {
         $this
             ->getSession()
-            ->resizeWindow($width, $height);
+            ->resizeWindow((int) $width, (int) $height);
     }
 }
