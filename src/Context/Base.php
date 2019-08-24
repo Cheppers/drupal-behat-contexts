@@ -37,6 +37,11 @@ class Base extends RawDrupalContext
         return $this;
     }
 
+    protected function isFinderExists(string $id): bool
+    {
+        return array_key_exists($id, $this->finders) || array_key_exists($id, $this->getDrupalParameter('selectors'));
+    }
+
     protected function getFinder(string $finderName, array $args = []): array
     {
         $drupalSelectors = $this->getDrupalParameter('selectors');
@@ -113,5 +118,36 @@ class Base extends RawDrupalContext
     {
         // @todo Somewhere there is a better solution for this.
         return htmlspecialchars($value, ENT_QUOTES, 'UTF-8', false);
+    }
+
+    /**
+     * @param \Behat\Mink\Element\NodeElement[] $nodeElements
+     *
+     * @return string[]
+     */
+    protected function nodeElementsToText(array $nodeElements): array
+    {
+        $return = [];
+
+        foreach ($nodeElements as $key => $nodeElement) {
+            $return[$key] = trim($nodeElement->getText());
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param \Behat\Mink\Element\NodeElement[] $nodeElements
+     *
+     * @return string[]
+     */
+    protected function nodeElementsToHtml(array $nodeElements): array
+    {
+        $return = [];
+        foreach ($nodeElements as $key => $nodeElement) {
+            $return[$key] = $nodeElement->getHtml();
+        }
+
+        return $return;
     }
 }
