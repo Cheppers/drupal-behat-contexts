@@ -78,6 +78,7 @@ class CoreMenu extends Base
         $menuWrapperFinder = $this->getFinder(
             'drupal.core.menu.wrapper',
             [
+                '{{ menuName }}' => $this->escapeXpathValue($this->getMenuNameByLabel($menuLabel)),
                 '{{ menuLabel }}' => $this->escapeXpathValue($menuLabel),
             ]
         );
@@ -104,6 +105,7 @@ class CoreMenu extends Base
         $menuLinksFinder = $this->getFinder(
             'drupal.core.menu.links',
             [
+                '{{ menuName }}' => $this->escapeXpathValue($this->getMenuNameByLabel($menuLabel)),
                 '{{ menuLabel }}' => $this->escapeXpathValue($menuLabel),
             ]
         );
@@ -112,5 +114,18 @@ class CoreMenu extends Base
             ->getSession()
             ->getPage()
             ->findAll($menuLinksFinder['selector'], $menuLinksFinder['locator']);
+    }
+
+    protected function getMenuNameByLabel(string $menuLabel): string
+    {
+        $menuStorage = \Drupal::entityTypeManager()->getStorage('menu');
+        $menus = $menuStorage->loadByProperties(['label' => $menuLabel]);
+        /** @var \Drupal\system\MenuInterface $menu */
+        $menu = reset($menus);
+        if (!$menu) {
+            throw new \Exception("Menu '$menuLabel' not found");
+        }
+
+        return $menu->id();
     }
 }
