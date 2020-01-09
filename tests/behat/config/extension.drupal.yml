@@ -5,7 +5,7 @@ default:
             drush:
                 alias: 'self'
             drupal:
-                drupal_root: '%paths.base%/../../docroot/'
+                drupal_root: '%paths.base%/../fixtures/project_01/docroot/'
             blackbox: ~
             api_driver: 'drupal'
             services: 'services.yml'

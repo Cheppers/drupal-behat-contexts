@@ -1,12 +1,10 @@
 
 /bin/
-/docroot/
-/tests/behat/behat.local.yml
 /reports/
-
-/sites/*/databases/
-/sites/*/private/
-/sites/*/hash_salt.txt
-
+/tests/fixtures/project_01/docroot/
+/tests/fixtures/project_01/sites/*/databases/
+/tests/fixtures/project_01/sites/*/private/
+/tests/fixtures/project_01/sites/*/hash_salt.txt
+/tests/behat/behat.local.yml
 /tmp/
 /vendor/

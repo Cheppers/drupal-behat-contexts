@@ -22,15 +22,16 @@
         }
     },
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "ext-pcre": "*",
         "cweagans/composer-patches": "^1.6",
-        "drupal/drupal-extension": "~3.3",
-        "phpunit/phpunit": "^6.5",
+        "drupal/drupal-extension": "^3.3",
+        "phpunit/phpunit": "^7.5",
         "nuvoleweb/drupal-behat": "^1.1",
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
+        "ext-json": "*",
         "ext-sqlite3": "*",
         "bex/behat-screenshot": "^1.2",
         "composer/installers": "^1.5",
@@ -38,12 +39,11 @@
         "drupal-composer/drupal-scaffold": "^2.4",
         "drupal/commerce": "^2.6",
         "drupal/commerce_shipping": "^2.0@beta",
-        "drupal/core": "^8.5",
-        "drush/drush": "^9.2",
+        "drupal/core-recommended": "^8.8",
+        "drush/drush": "^10.1",
         "jarnaiz/behat-junit-formatter": "^1.3",
-        "phpunit/php-code-coverage": "^5.3",
         "squizlabs/php_codesniffer": "^3.2",
-        "symfony/filesystem": "^2.8 || ^3.4 || ^4.0"
+        "symfony/filesystem": "^3.4 || ^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -72,31 +72,31 @@
             "npm-asset"
         ],
         "installer-paths": {
-            "docroot/core": [
+            "tests/fixtures/project_01/docroot/core": [
                 "type:drupal-core"
             ],
-            "docroot/modules/contrib/{$name}": [
+            "tests/fixtures/project_01/docroot/modules/contrib/{$name}": [
                 "type:drupal-module"
             ],
-            "docroot/modules/custom/{$name}": [
+            "tests/fixtures/project_01/docroot/modules/custom/{$name}": [
                 "type:drupal-custom-module"
             ],
-            "docroot/profiles/contrib/{$name}": [
+            "tests/fixtures/project_01/docroot/profiles/contrib/{$name}": [
                 "type:drupal-profile"
             ],
-            "docroot/profiles/custom/{$name}": [
+            "tests/fixtures/project_01/docroot/profiles/custom/{$name}": [
                 "type:drupal-custom-profile"
             ],
-            "docroot/themes/contrib/{$name}": [
+            "tests/fixtures/project_01/docroot/themes/contrib/{$name}": [
                 "type:drupal-theme"
             ],
-            "docroot/themes/custom/{$name}": [
+            "tests/fixtures/project_01/docroot/themes/custom/{$name}": [
                 "type:drupal-custom-theme"
             ],
-            "docroot/libraries/slick": [
+            "tests/fixtures/project_01/docroot/libraries/slick": [
                 "npm-asset/slick-carousel"
             ],
-            "docroot/libraries/{$name}": [
+            "tests/fixtures/project_01/docroot/libraries/{$name}": [
                 "type:drupal-library",
                 "type:bower-asset",
                 "type:npm-asset"
@@ -106,10 +106,15 @@
             ]
         },
         "drupal-scaffold": {
-            "source": "https://cgit.drupalcode.org/drupal/plain/{path}?h={version}",
             "excludes": [
                 "google123.html",
-                "robots.txt"
+                ".csslintrc",
+                ".editorconfig",
+                ".eslintignore",
+                ".eslintrc.json",
+                ".gitattributes",
+                ".htaccess",
+                "web.config"
             ],
             "initial": {
                 "sites/default/default.services.yml": "sites/default/services.yml",
@@ -134,6 +139,17 @@
         "test": [
             "@test:behat"
         ],
-        "test:behat": "cd tests/behat && phpdbg -qrr ../../bin/behat --colors"
+        "test:behat": "cd tests/behat && phpdbg -qrr ../../bin/behat --colors",
+        "clean": [
+            "@clean:reports",
+            "@clean:composer"
+        ],
+        "clean:reports": "[ ! -d ./reports/ ] || find ./reports/ -mindepth 1 -maxdepth 1 -exec rm -rf {} \\;",
+        "clean:composer": [
+            "rm -rf bin/ reports/ vendor/",
+            "chmod -R u+w tests/fixtures/project_01/docroot/",
+            "git clean --force -d -x -- tests/",
+            "git clean --force -d -X -- tests/"
+        ]
     }
 }
