@@ -37,9 +37,17 @@ class CoreTabs extends Base
     public function assertPrimaryTabsTable(TableNode $table)
     {
         $expected = $table->getColumn(0);
-        $actual = $this->getPrimaryTabsLinkLabels();
+        $actual = $this->getPrimaryTabsLinkLabels(true);
 
         Assert::assertSame($expected, $actual);
+    }
+
+    /**
+     * @Then /^I should not see any primary tabs$/
+     */
+    public function assertPrimaryTabsNotExists()
+    {
+        Assert::assertEmpty($this->getPrimaryTabsLinks(false));
     }
 
     /**
@@ -52,7 +60,7 @@ class CoreTabs extends Base
             ->clickLink($linkText);
     }
 
-    protected function getPrimaryTabsElement(bool $required = false): ?NodeElement
+    protected function getPrimaryTabsElement(bool $required): ?NodeElement
     {
         $primaryTabsWrapperFinder = $this->getFinder('drupal.core.tabs.primary_tabs_wrapper');
 
@@ -61,7 +69,7 @@ class CoreTabs extends Base
             ->getPage()
             ->find($primaryTabsWrapperFinder['selector'], $primaryTabsWrapperFinder['locator']);
 
-        if (!$required && !$primaryTabsElement) {
+        if ($required && !$primaryTabsElement) {
             throw  new ElementNotFoundException(
                 $this->getSession()->getDriver(),
                 'other',
@@ -76,22 +84,25 @@ class CoreTabs extends Base
     /**
      * @return \Behat\Mink\Element\NodeElement[]
      */
-    protected function getPrimaryTabsLinks(): array
+    protected function getPrimaryTabsLinks(bool $required): array
     {
+        $tabs = $this->getPrimaryTabsElement($required);
+        if (!$required && !$tabs) {
+            return [];
+        }
+
         $linksFinder = $this->getFinder('drupal.core.tabs.primary_tabs_links');
 
-        return $this
-            ->getPrimaryTabsElement(true)
-            ->findAll($linksFinder['selector'], $linksFinder['locator']);
+        return $tabs->findAll($linksFinder['selector'], $linksFinder['locator']);
     }
 
     /**
      * @return string[]
      */
-    protected function getPrimaryTabsLinkLabels(): array
+    protected function getPrimaryTabsLinkLabels(bool $required): array
     {
         $linkLabels = [];
-        foreach ($this->getPrimaryTabsLinks() as $linkElement) {
+        foreach ($this->getPrimaryTabsLinks($required) as $linkElement) {
             $linkLabels[] = $linkElement->getText();
         }
 
