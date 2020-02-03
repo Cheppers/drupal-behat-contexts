@@ -90,7 +90,10 @@ class CoreMessage extends Base
      */
     public function assertMessage(string $messageType, string $message)
     {
-        Assert::assertContains($message, $this->getActualMessagesByType($messageType));
+        Assert::assertContains(
+            $message,
+            $this->nodeElementsToText($this->getActualMessagesByType($messageType))
+        );
     }
 
     /**
@@ -98,7 +101,10 @@ class CoreMessage extends Base
      */
     public function assertMessageNot(string $messageType, string $message)
     {
-        Assert::assertNotContains($message, $this->getActualMessagesByType($messageType));
+        Assert::assertNotContains(
+            $message,
+            $this->nodeElementsToText($this->getActualMessagesByType($messageType))
+        );
     }
 
     /**
