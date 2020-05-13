@@ -49,7 +49,7 @@ class CommerceProduct extends Base
     public function doGoToCommerceProductLink(string $title, string $link = 'canonical')
     {
         $url = $this->getCommerceProductUrlByTitle($title, $link);
-        Assert::notEmpty(
+        Assert::assertNotEmpty(
             $url,
             sprintf('No product with "%s" title is exists.', $title)
         );
@@ -65,7 +65,7 @@ class CommerceProduct extends Base
     {
         /** @var \Drupal\commerce_product\Entity\ProductInterface $product */
         $product = $this->getCommerceProductByTitle($productTitle);
-        Assert::notNull(
+        Assert::assertNotNull(
             $product,
             sprintf('Product has been found with title "%s"', $productTitle)
         );
@@ -73,7 +73,7 @@ class CommerceProduct extends Base
         $expectedTitles = $table->getColumn(0);
         $productVariations = $product->getVariations();
 
-        Assert::same(
+        Assert::assertSame(
             count($expectedTitles),
             count($productVariations),
             sprintf(
@@ -84,7 +84,7 @@ class CommerceProduct extends Base
         );
 
         foreach ($product->getVariations() as $delta => $productVariation) {
-            Assert::same(
+            Assert::assertSame(
                 $expectedTitles[$delta],
                 $productVariation->label(),
                 sprintf(
@@ -104,7 +104,7 @@ class CommerceProduct extends Base
     {
         /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $variation */
         $variation = $this->getContentEntityByLabel('commerce_product_variation', $variationTitle);
-        Assert::notNull(
+        Assert::assertNotNull(
             $variation,
             sprintf('Product variation has been found with title "%s"', $variationTitle)
         );
