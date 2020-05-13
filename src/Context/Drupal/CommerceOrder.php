@@ -4,6 +4,7 @@ namespace Cheppers\DrupalExtension\Context\Drupal;
 
 use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
+use Drupal;
 use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_order\Entity\OrderInterface;
 use PHPUnit\Framework\Assert;
@@ -35,7 +36,7 @@ class CommerceOrder extends Base
 
     protected function getLastCompletedCommerceOrder(int $ownerId): ?OrderInterface
     {
-        $orderIds = \Drupal::entityTypeManager()
+        $orderIds = Drupal::entityTypeManager()
             ->getStorage('commerce_order')
             ->getQuery()
             ->condition('state', 'completed')
@@ -60,7 +61,7 @@ class CommerceOrder extends Base
             $properties['state'] = $state;
         }
 
-        return \Drupal::entityTypeManager()
+        return Drupal::entityTypeManager()
             ->getStorage('commerce_payment')
             ->loadByProperties($properties);
     }

@@ -4,6 +4,7 @@ namespace Cheppers\DrupalExtension\Context\Drupal;
 
 use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
+use Drupal;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\PhpStorage\PhpStorageFactory;
 
@@ -31,7 +32,7 @@ class CoreCache extends Base
 
     protected function doCacheRebuildBins()
     {
-        $module_handler = \Drupal::moduleHandler();
+        $module_handler = Drupal::moduleHandler();
         // Flush all persistent caches.
         // This is executed based on old/previously known information, which is
         // sufficient, since new extensions cannot have any primed caches yet.
@@ -45,8 +46,8 @@ class CoreCache extends Base
 
     protected function doCacheRebuildAssets()
     {
-        \Drupal::service('asset.css.collection_optimizer')->deleteAll();
-        \Drupal::service('asset.js.collection_optimizer')->deleteAll();
+        Drupal::service('asset.css.collection_optimizer')->deleteAll();
+        Drupal::service('asset.js.collection_optimizer')->deleteAll();
         _drupal_flush_css_js();
 
         return $this;
@@ -61,7 +62,7 @@ class CoreCache extends Base
 
     protected function doCacheRebuildKernelContainer()
     {
-        \Drupal::service('kernel')->invalidateContainer();
+        Drupal::service('kernel')->invalidateContainer();
 
         return $this;
     }
@@ -75,7 +76,7 @@ class CoreCache extends Base
 
     protected function doCacheRebuildPluginDefinitions()
     {
-        \Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
+        Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
 
         return $this;
     }
@@ -88,7 +89,7 @@ class CoreCache extends Base
         $cacheTag = $this->processCacheTag($cacheTag);
 
         /** @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface $s */
-        $cacheTagsInvalidator = \Drupal::service('cache_tags.invalidator');
+        $cacheTagsInvalidator = Drupal::service('cache_tags.invalidator');
         $cacheTagsInvalidator->invalidateTags([$cacheTag]);
     }
 
@@ -96,7 +97,7 @@ class CoreCache extends Base
     {
         $parts = explode(':', $cacheTag);
 
-        $etm = \Drupal::entityTypeManager();
+        $etm = Drupal::entityTypeManager();
         if ($etm->hasDefinition($parts[0]) && !empty($parts[1])
             && !is_numeric($parts[1])) {
             $entity = $this->getContentEntityByLabel($parts[0], $parts[1]);

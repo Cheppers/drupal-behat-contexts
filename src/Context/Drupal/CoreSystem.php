@@ -3,6 +3,7 @@
 namespace Cheppers\DrupalExtension\Context\Drupal;
 
 use Cheppers\DrupalExtension\Context\Base;
+use Drupal;
 use PHPUnit\Framework\Assert;
 
 class CoreSystem extends Base
@@ -37,7 +38,7 @@ class CoreSystem extends Base
 
     protected static function setSiteMaintenanceMode(bool $state)
     {
-        \Drupal::state()->set('system.maintenance_mode', $state);
+        Drupal::state()->set('system.maintenance_mode', $state);
     }
 
     /**

@@ -5,6 +5,8 @@ namespace Cheppers\DrupalExtension\Context\Drupal;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Cheppers\DrupalExtension\Context\Base;
+use Drupal;
+use Exception;
 use PHPUnit\Framework\Assert;
 
 class CoreMenu extends Base
@@ -118,12 +120,12 @@ class CoreMenu extends Base
 
     protected function getMenuNameByLabel(string $menuLabel): string
     {
-        $menuStorage = \Drupal::entityTypeManager()->getStorage('menu');
+        $menuStorage = Drupal::entityTypeManager()->getStorage('menu');
         $menus = $menuStorage->loadByProperties(['label' => $menuLabel]);
         /** @var \Drupal\system\MenuInterface $menu */
         $menu = reset($menus);
         if (!$menu) {
-            throw new \Exception("Menu '$menuLabel' not found");
+            throw new Exception("Menu '$menuLabel' not found");
         }
 
         return $menu->id();

@@ -5,6 +5,7 @@ namespace Cheppers\DrupalExtension\Context\Drupal;
 use Behat\Gherkin\Node\TableNode;
 use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
+use Drupal;
 use Drupal\commerce_product\Entity\ProductInterface;
 use PHPUnit\Framework\Assert;
 
@@ -122,7 +123,7 @@ class CommerceProduct extends Base
 
     protected function getCommerceProductByTitle(string $title): ?ProductInterface
     {
-        $storage = \Drupal::entityTypeManager()->getStorage('commerce_product');
+        $storage = Drupal::entityTypeManager()->getStorage('commerce_product');
         $ids = $storage
             ->getQuery()
             ->condition('title', $title)

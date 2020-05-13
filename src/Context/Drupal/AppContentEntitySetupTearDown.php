@@ -3,7 +3,9 @@
 namespace Cheppers\DrupalExtension\Context\Drupal;
 
 use Cheppers\DrupalExtension\Context\Base;
+use Drupal;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 
 class AppContentEntitySetupTearDown extends Base
@@ -81,7 +83,7 @@ class AppContentEntitySetupTearDown extends Base
     {
         try {
             $this->visitPath('/');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Do nothing.
         }
 
@@ -103,7 +105,7 @@ class AppContentEntitySetupTearDown extends Base
      */
     protected function initLatestContentEntityIds()
     {
-        $etm = \Drupal::entityTypeManager();
+        $etm = Drupal::entityTypeManager();
         $entityTypes = $etm->getDefinitions();
 
         foreach ($entityTypes as $entityType) {
@@ -129,7 +131,7 @@ class AppContentEntitySetupTearDown extends Base
      */
     protected function cleanNewContentEntities()
     {
-        $etm = \Drupal::entityTypeManager();
+        $etm = Drupal::entityTypeManager();
 
         uksort($this->latestContentEntityIds, [static::class, 'compareEntityTypesByWeight']);
 
@@ -157,7 +159,7 @@ class AppContentEntitySetupTearDown extends Base
     protected function cleanUnManagedFiles()
     {
         $fs = new Filesystem();
-        $drupalRoot = \Drupal::root();
+        $drupalRoot = Drupal::root();
         while (($fileName = array_pop($this->unManagedFiles))) {
             $fs->remove("$drupalRoot/$fileName");
         }

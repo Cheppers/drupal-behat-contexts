@@ -5,6 +5,7 @@ namespace Cheppers\DrupalExtension\Context\Drupal;
 use Behat\Gherkin\Node\TableNode;
 use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
+use Drupal;
 use Drupal\file\FileInterface;
 use PHPUnit\Framework\Assert;
 use Webmozart\PathUtil\Path;
@@ -18,7 +19,7 @@ class CoreFile extends Base
      */
     public function doCreateFiles(TableNode $tableNode)
     {
-        $fileStorage = \Drupal::entityTypeManager()->getStorage('file');
+        $fileStorage = Drupal::entityTypeManager()->getStorage('file');
         $baseDir = $this->getMinkParameter('files_path');
         foreach ($tableNode->getColumnsHash() as $row) {
             $srcPath = Path::join($baseDir, $row['source']);

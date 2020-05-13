@@ -7,6 +7,7 @@ use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Component\Drupal\CoreEntityFormContextTrait;
 use Cheppers\DrupalExtension\Component\ScrollToElementContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
+use Exception;
 use PHPUnit\Framework\Assert;
 
 class InlineEntityForm extends Base
@@ -37,7 +38,7 @@ class InlineEntityForm extends Base
         $actionButtons = $this->getInlineEntityFormActionButtons($fieldName, $entityLabel);
         $editButton = $this->getInlineEntityFormActionButton('edit', $actionButtons);
         if (!$editButton) {
-            throw new \Exception("@todo Edit button not found");
+            throw new Exception("@todo Edit button not found");
         }
 
         $this->scrollToElementByCssLocator('#' . $editButton->getAttribute('id'));
