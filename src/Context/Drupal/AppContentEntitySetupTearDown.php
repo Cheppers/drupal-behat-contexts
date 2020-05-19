@@ -16,6 +16,7 @@ class AppContentEntitySetupTearDown extends Base
     protected static $entityTypeWeights = [];
 
     /**
+     * @return array
      * @var int[]
      */
     protected static function getEntityTypeWeights(): array
@@ -77,6 +78,13 @@ class AppContentEntitySetupTearDown extends Base
     protected $latestContentEntityIds = [];
 
     /**
+     * Existing Alphabetic Content Entity IDs before the scenario.
+     *
+     * @var string[]
+     */
+    protected $latestAlphabeticEntityIds = [];
+
+    /**
      * @BeforeScenario
      */
     public function hookBeforeScenario()
@@ -86,8 +94,9 @@ class AppContentEntitySetupTearDown extends Base
         } catch (Exception $e) {
             // Do nothing.
         }
-
-        $this->initLatestContentEntityIds();
+        $this
+            ->getAlphabeticEntityId()
+            ->initLatestContentEntityIds();
     }
 
     /**
@@ -96,8 +105,66 @@ class AppContentEntitySetupTearDown extends Base
     public function hookAfterScenario()
     {
         $this
+            ->cleanAlphabeticEntities()
             ->cleanNewContentEntities()
             ->cleanUnManagedFiles();
+    }
+
+    /**
+     * @return $this
+     */
+    protected function getAlphabeticEntityId()
+    {
+        $etm = Drupal::entityTypeManager();
+        $entityTypes = $etm->getDefinitions();
+
+        foreach ($entityTypes as $entityType) {
+            if (!$this->isContentEntityType($entityType)) {
+                continue;
+            }
+
+            $ids = $etm
+                ->getStorage($entityType->id())
+                ->getQuery()
+                ->execute();
+            if (preg_match("/[a-z]/i", reset($ids))) {
+                $this->latestAlphabeticEntityIds[$entityType->id()] = $ids;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function cleanAlphabeticEntities()
+    {
+        $etm = Drupal::entityTypeManager();
+        $entityTypes = $etm->getDefinitions();
+        $afterScenarioEntities = [];
+        foreach ($entityTypes as $entityType) {
+            if (!$this->isContentEntityType($entityType)) {
+                continue;
+            }
+            $ids = $etm
+                ->getStorage($entityType->id())
+                ->getQuery()
+                ->execute();
+            if (preg_match("/[a-z]/i", reset($ids))) {
+                $afterScenarioEntities[$entityType->id()] = $ids;
+            }
+        }
+        foreach ($afterScenarioEntities as $entityTypeId => $afterScenarioEntity) {
+            $diff[$entityTypeId] = array_diff(
+                $afterScenarioEntities[$entityTypeId],
+                (array) $this->latestAlphabeticEntityIds[$entityTypeId]
+            );
+            $storage = $etm->getStorage($entityTypeId);
+            $storage->delete($storage->loadMultiple($diff[$entityTypeId]));
+        }
+
+        return $this;
     }
 
     /**
@@ -120,7 +187,12 @@ class AppContentEntitySetupTearDown extends Base
                 ->range(0, 1)
                 ->execute();
 
-            $this->latestContentEntityIds[$entityType->id()] = (int)reset($ids);
+            if (preg_match("/[a-z]/i", reset($ids))) {
+                continue;
+            }
+            $this->latestContentEntityIds[$entityType->id()] = (int) reset(
+                $ids
+            );
         }
 
         return $this;
