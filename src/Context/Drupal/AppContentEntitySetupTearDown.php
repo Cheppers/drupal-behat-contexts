@@ -15,9 +15,6 @@ class AppContentEntitySetupTearDown extends Base
      */
     protected static $entityTypeWeights = [];
 
-    /**
-     * @var int[]
-     */
     protected static function getEntityTypeWeights(): array
     {
         if (!static::$entityTypeWeights) {
@@ -72,7 +69,7 @@ class AppContentEntitySetupTearDown extends Base
     /**
      * Existing Content Entity IDs before the scenario.
      *
-     * @var int[]
+     * @var int[]|string[][]|false
      */
     protected $latestContentEntityIds = [];
 
@@ -106,9 +103,7 @@ class AppContentEntitySetupTearDown extends Base
     protected function initLatestContentEntityIds()
     {
         $etm = Drupal::entityTypeManager();
-        $entityTypes = $etm->getDefinitions();
-
-        foreach ($entityTypes as $entityType) {
+        foreach ($etm->getDefinitions() as $entityType) {
             if (!$this->isContentEntityType($entityType)) {
                 continue;
             }
@@ -120,7 +115,23 @@ class AppContentEntitySetupTearDown extends Base
                 ->range(0, 1)
                 ->execute();
 
-            $this->latestContentEntityIds[$entityType->id()] = (int)reset($ids);
+            if (!$ids) {
+                $this->latestContentEntityIds[$entityType->id()] = null;
+
+                continue;
+            }
+
+            $id = reset($ids);
+            if (preg_match('/^\d+$/', $id)) {
+                $this->latestContentEntityIds[$entityType->id()] = (int) $id;
+
+                continue;
+            }
+
+            $this->latestContentEntityIds[$entityType->id()] = $etm
+                ->getStorage($entityType->id())
+                ->getQuery()
+                ->execute();
         }
 
         return $this;
@@ -132,22 +143,29 @@ class AppContentEntitySetupTearDown extends Base
     protected function cleanNewContentEntities()
     {
         $etm = Drupal::entityTypeManager();
-
         uksort($this->latestContentEntityIds, [static::class, 'compareEntityTypesByWeight']);
-
         foreach ($this->latestContentEntityIds as $entityTypeId => $entityId) {
-            $entityType = $etm->getDefinition($entityTypeId);
-            $storage = $etm->getStorage($entityTypeId);
-            $ids = $storage
-                ->getQuery()
-                ->condition($entityType->getKey('id'), $entityId, '>')
-                ->execute();
-
-            if (!$ids) {
+            if (!$etm->hasDefinition($entityTypeId)) {
                 continue;
             }
 
-            $storage->delete($storage->loadMultiple($ids));
+            $entityType = $etm->getDefinition($entityTypeId);
+            $storage = $etm->getStorage($entityTypeId);
+            $idFieldName = $entityType->getKey('id');
+
+            $query = $storage->getQuery();
+            if ($entityId) {
+                $query->condition(
+                    $idFieldName,
+                    $entityId,
+                    is_array($entityId) ? 'NOT IN' : '>'
+                );
+            }
+
+            $ids = $query->execute();
+            if ($ids) {
+                $storage->delete($storage->loadMultiple($ids));
+            }
         }
 
         return $this;
