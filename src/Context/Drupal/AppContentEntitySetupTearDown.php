@@ -15,10 +15,6 @@ class AppContentEntitySetupTearDown extends Base
      */
     protected static $entityTypeWeights = [];
 
-    /**
-     * @return array
-     * @var int[]
-     */
     protected static function getEntityTypeWeights(): array
     {
         if (!static::$entityTypeWeights) {
@@ -73,16 +69,9 @@ class AppContentEntitySetupTearDown extends Base
     /**
      * Existing Content Entity IDs before the scenario.
      *
-     * @var int[]
+     * @var int[]|string[][]|false
      */
     protected $latestContentEntityIds = [];
-
-    /**
-     * Existing Alphabetic Content Entity IDs before the scenario.
-     *
-     * @var string[]
-     */
-    protected $latestAlphabeticEntityIds = [];
 
     /**
      * @BeforeScenario
@@ -94,9 +83,8 @@ class AppContentEntitySetupTearDown extends Base
         } catch (Exception $e) {
             // Do nothing.
         }
-        $this
-            ->getAlphabeticEntityId()
-            ->initLatestContentEntityIds();
+
+        $this->initLatestContentEntityIds();
     }
 
     /**
@@ -105,66 +93,8 @@ class AppContentEntitySetupTearDown extends Base
     public function hookAfterScenario()
     {
         $this
-            ->cleanAlphabeticEntities()
             ->cleanNewContentEntities()
             ->cleanUnManagedFiles();
-    }
-
-    /**
-     * @return $this
-     */
-    protected function getAlphabeticEntityId()
-    {
-        $etm = Drupal::entityTypeManager();
-        $entityTypes = $etm->getDefinitions();
-
-        foreach ($entityTypes as $entityType) {
-            if (!$this->isContentEntityType($entityType)) {
-                continue;
-            }
-
-            $ids = $etm
-                ->getStorage($entityType->id())
-                ->getQuery()
-                ->execute();
-            if (preg_match("/[a-z]/i", reset($ids))) {
-                $this->latestAlphabeticEntityIds[$entityType->id()] = $ids;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    protected function cleanAlphabeticEntities()
-    {
-        $etm = Drupal::entityTypeManager();
-        $entityTypes = $etm->getDefinitions();
-        $afterScenarioEntities = [];
-        foreach ($entityTypes as $entityType) {
-            if (!$this->isContentEntityType($entityType)) {
-                continue;
-            }
-            $ids = $etm
-                ->getStorage($entityType->id())
-                ->getQuery()
-                ->execute();
-            if (preg_match("/[a-z]/i", reset($ids))) {
-                $afterScenarioEntities[$entityType->id()] = $ids;
-            }
-        }
-        foreach ($afterScenarioEntities as $entityTypeId => $afterScenarioEntity) {
-            $diff[$entityTypeId] = array_diff(
-                $afterScenarioEntities[$entityTypeId],
-                (array) $this->latestAlphabeticEntityIds[$entityTypeId]
-            );
-            $storage = $etm->getStorage($entityTypeId);
-            $storage->delete($storage->loadMultiple($diff[$entityTypeId]));
-        }
-
-        return $this;
     }
 
     /**
@@ -173,9 +103,7 @@ class AppContentEntitySetupTearDown extends Base
     protected function initLatestContentEntityIds()
     {
         $etm = Drupal::entityTypeManager();
-        $entityTypes = $etm->getDefinitions();
-
-        foreach ($entityTypes as $entityType) {
+        foreach ($etm->getDefinitions() as $entityType) {
             if (!$this->isContentEntityType($entityType)) {
                 continue;
             }
@@ -187,12 +115,23 @@ class AppContentEntitySetupTearDown extends Base
                 ->range(0, 1)
                 ->execute();
 
-            if (preg_match("/[a-z]/i", reset($ids))) {
+            if (!$ids) {
+                $this->latestContentEntityIds[$entityType->id()] = null;
+
                 continue;
             }
-            $this->latestContentEntityIds[$entityType->id()] = (int) reset(
-                $ids
-            );
+
+            $id = reset($ids);
+            if (preg_match('/^\d+$/', $id)) {
+                $this->latestContentEntityIds[$entityType->id()] = (int) $id;
+
+                continue;
+            }
+
+            $this->latestContentEntityIds[$entityType->id()] = $etm
+                ->getStorage($entityType->id())
+                ->getQuery()
+                ->execute();
         }
 
         return $this;
@@ -204,22 +143,29 @@ class AppContentEntitySetupTearDown extends Base
     protected function cleanNewContentEntities()
     {
         $etm = Drupal::entityTypeManager();
-
         uksort($this->latestContentEntityIds, [static::class, 'compareEntityTypesByWeight']);
-
         foreach ($this->latestContentEntityIds as $entityTypeId => $entityId) {
-            $entityType = $etm->getDefinition($entityTypeId);
-            $storage = $etm->getStorage($entityTypeId);
-            $ids = $storage
-                ->getQuery()
-                ->condition($entityType->getKey('id'), $entityId, '>')
-                ->execute();
-
-            if (!$ids) {
+            if (!$etm->hasDefinition($entityTypeId)) {
                 continue;
             }
 
-            $storage->delete($storage->loadMultiple($ids));
+            $entityType = $etm->getDefinition($entityTypeId);
+            $storage = $etm->getStorage($entityTypeId);
+            $idFieldName = $entityType->getKey('id');
+
+            $query = $storage->getQuery();
+            if ($entityId) {
+                $query->condition(
+                    $idFieldName,
+                    $entityId,
+                    is_array($entityId) ? 'NOT IN' : '>'
+                );
+            }
+
+            $ids = $query->execute();
+            if ($ids) {
+                $storage->delete($storage->loadMultiple($ids));
+            }
         }
 
         return $this;
