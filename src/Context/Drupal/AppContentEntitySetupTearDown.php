@@ -151,12 +151,12 @@ class AppContentEntitySetupTearDown extends Base
 
             $entityType = $etm->getDefinition($entityTypeId);
             $storage = $etm->getStorage($entityTypeId);
-            $idFieldName = $entityType->getKey('id');
 
             $query = $storage->getQuery();
-            if ($entityId) {
+
+            if ($entityId !== null) {
                 $query->condition(
-                    $idFieldName,
+                    $entityType->getKey('id'),
                     $entityId,
                     is_array($entityId) ? 'NOT IN' : '>'
                 );
