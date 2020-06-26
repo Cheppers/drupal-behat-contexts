@@ -154,17 +154,22 @@ class AppContentEntitySetupTearDown extends Base
 
             $query = $storage->getQuery();
 
-            if ($entityId !== null) {
-                $query->condition(
+            if ($entityId === null) {
+                $storage->delete($storage->loadMultiple(NULL));
+
+                continue;
+            }
+
+            $idsToDelete = $query
+                ->condition(
                     $entityType->getKey('id'),
                     $entityId,
                     is_array($entityId) ? 'NOT IN' : '>'
-                );
-            }
+                )
+                ->execute();
 
-            $ids = $query->execute();
-            if ($ids) {
-                $storage->delete($storage->loadMultiple($ids));
+            if ($idsToDelete) {
+                $storage->delete($storage->loadMultiple($idsToDelete));
             }
         }
 
