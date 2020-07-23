@@ -155,6 +155,7 @@ class AppContentEntitySetupTearDown extends Base
             $query = $storage->getQuery();
 
             if ($entityId === null) {
+                $storage->resetCache();
                 $storage->delete($storage->loadMultiple(NULL));
 
                 continue;
@@ -169,6 +170,7 @@ class AppContentEntitySetupTearDown extends Base
                 ->execute();
 
             if ($idsToDelete) {
+                $storage->resetCache($idsToDelete);
                 $storage->delete($storage->loadMultiple($idsToDelete));
             }
         }

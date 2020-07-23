@@ -38,8 +38,14 @@ trait CoreContentEntityContextTrait
 
         // @todo Multiple result.
         $id = reset($ids);
+        if ($id === false) {
+            return null;
+        }
 
-        return $id ? $storage->load($id) : null;
+        // https://www.drupal.org/project/drupal/issues/2986322
+        $storage->resetCache();
+
+        return $storage->load($id);
     }
 
     protected function getContentEntityUrlByLabel(
