@@ -30,22 +30,23 @@ trait CoreContentEntityContextTrait
             }
         }
 
-        $ids = $storage
-            ->getQuery()
-            ->condition($fieldName, $label)
-            ->sort($entityType->getKey('id'), 'DESC')
-            ->execute();
-
-        // @todo Multiple result.
-        $id = reset($ids);
-        if ($id === false) {
-            return null;
-        }
-
         // https://www.drupal.org/project/drupal/issues/2986322
         $storage->resetCache();
 
-        return $storage->load($id);
+        $entities = $storage
+            ->loadByProperties(
+                [
+                    $fieldName => $label,
+                ],
+            );
+
+        // @todo Multiple result.
+        $entity = reset($entities);
+        if ($entity === false) {
+            return null;
+        }
+
+        return $entity;
     }
 
     protected function getContentEntityUrlByLabel(
