@@ -23,6 +23,10 @@ trait XpathContextTrait
 
     protected function numerify(string $string): float
     {
-        return (float) preg_replace('/([^\d]+)?/', '', $string);
+        return (float) preg_replace(
+            '/([^\d\.]+)?/',
+            '',
+            str_replace(',', '.', $string)
+        );
     }
 }
