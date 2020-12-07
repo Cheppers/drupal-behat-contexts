@@ -1,6 +1,0 @@
-
-default:
-    extensions:
-        jarnaiz\JUnitFormatter\JUnitFormatterExtension:
-            filename: 'report.xml'
-            outputDir: '../../reports/machine/behat/junit/'

@@ -1,13 +1,18 @@
+@api
+@javascript
 Feature: Test steps in \Cheppers\DrupalExtension\Context\Drupal\CoreVerticalTabs
 
-    @api @javascript
+    @ezt
+    Scenario: Bar
+        Given I am logged in as a user with the "Administrator" role
+        And I am at "/"
+
     Scenario: Activate a tab.
         Given I am logged in as a user with the "Administrator" role
         And I am on "/admin/config/people/accounts"
         When I activate the "Password recovery" vertical tab in the "Emails"
         Then I should see the text "Edit the email messages sent to users who request a new password."
 
-    @api @javascript
     Scenario: AssertSame tab labels.
         Given I am logged in as a user with the "Administrator" role
         And I am on "/admin/config/people/accounts"

@@ -9,10 +9,11 @@
         "bin-dir": "bin",
         "optimize-autoloader": true,
         "preferred-install": "dist",
+        "process-timeout": 0,
         "sort-packages": true
     },
     "repositories": {
-        "drupal-8": {
+        "drupal": {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         },
@@ -22,28 +23,29 @@
         }
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.3",
         "ext-pcre": "*",
         "cweagans/composer-patches": "^1.6",
-        "drupal/drupal-extension": "^3.3",
-        "phpunit/phpunit": "^7.5",
+        "drupal/drupal-extension": "^4.0",
         "nuvoleweb/drupal-behat": "^1.1",
+        "phpunit/phpunit": "^9.4",
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
         "ext-json": "*",
         "ext-sqlite3": "*",
         "bex/behat-screenshot": "^1.2",
-        "composer/installers": "^1.5",
+        "composer/installers": "^1.6",
         "dmore/behat-chrome-extension": "^1.1",
-        "drupal-composer/drupal-scaffold": "^2.4",
         "drupal/commerce": "^2.6",
         "drupal/commerce_shipping": "^2.0@beta",
-        "drupal/core-recommended": "^8.8",
+        "drupal/core-composer-scaffold": "^9.0",
+        "drupal/core-recommended": "^9.0",
         "drush/drush": "^10.1",
-        "jarnaiz/behat-junit-formatter": "^1.3",
+        "oomphinc/composer-installers-extender": "^2.0",
         "squizlabs/php_codesniffer": "^3.2",
-        "symfony/filesystem": "^3.4 || ^4.0"
+        "symfony/filesystem": "^4.0 || ^5.0",
+        "symfony/phpunit-bridge": "^5.2"
     },
     "autoload": {
         "psr-4": {
@@ -62,9 +64,6 @@
         "patches": {
             "drupal/drupal-extension": {
                 "Behat config schema - extendable selectors and text": "https://patch-diff.githubusercontent.com/raw/jhedstrom/drupalextension/pull/494.patch"
-            },
-            "nuvoleweb/drupal-behat": {
-                "context compatibility": "https://patch-diff.githubusercontent.com/raw/nuvoleweb/drupal-behat/pull/34.patch"
             }
         },
         "installer-types": [
@@ -106,33 +105,85 @@
             ]
         },
         "drupal-scaffold": {
-            "excludes": [
-                "google123.html",
-                ".csslintrc",
-                ".editorconfig",
-                ".eslintignore",
-                ".eslintrc.json",
-                ".gitattributes",
-                ".htaccess",
-                "web.config"
-            ],
-            "initial": {
-                "sites/default/default.services.yml": "sites/default/services.yml",
-                "sites/default/default.settings.php": "sites/default/settings.php"
+            "locations": {
+                "web-root": "./tests/fixtures/project_01/docroot"
             },
-            "omit-defaults": false
+            "file-mapping": {
+                "[project-root]/.editorconfig": {
+                    "mode": "skip"
+                },
+                "[project-root]/.gitattributes": {
+                    "mode": "skip"
+                },
+                "[web-root]/.csslintrc": {
+                    "mode": "skip"
+                },
+                "[web-root]/.editorconfig": {
+                    "mode": "skip"
+                },
+                "[web-root]/.eslintignore": {
+                    "mode": "skip"
+                },
+                "[web-root]/.eslintrc.json": {
+                    "mode": "skip"
+                },
+                "[web-root]/.gitattributes": {
+                    "mode": "skip"
+                },
+                "[web-root]/example.gitignore": {
+                    "mode": "skip"
+                },
+                "[web-root]/INSTALL.txt": {
+                    "mode": "skip"
+                },
+                "[web-root]/README.txt": {
+                    "mode": "skip"
+                },
+                "[web-root]/modules/.gitignore": {
+                    "mode": "skip"
+                },
+                "[web-root]/modules/README.txt": {
+                    "mode": "skip"
+                },
+                "[web-root]/profiles/.gitignore": {
+                    "mode": "skip"
+                },
+                "[web-root]/profiles/README.txt": {
+                    "mode": "skip"
+                },
+                "[web-root]/themes/.gitignore": {
+                    "mode": "skip"
+                },
+                "[web-root]/themes/README.txt": {
+                    "mode": "skip"
+                },
+                "[web-root]/sites/.gitignore": {
+                    "mode": "skip"
+                },
+                "[web-root]/sites/README.txt": {
+                    "mode": "skip"
+                },
+                "[web-root]/.htaccess": {
+                    "mode": "skip"
+                },
+                "[web-root]/web.config": {
+                    "mode": "skip"
+                }
+            },
+            "initial": {
+                "sites/default/default.services.yml": "[web-root]/sites/default/services.yml",
+                "sites/default/default.settings.php": "[web-root]/sites/default/settings.php"
+            }
         }
     },
     "scripts": {
         "post-install-cmd": [
-            "@drupal-scaffold",
             "@prepare"
         ],
         "lint": [
             "@lint:phpcs"
         ],
         "lint:phpcs": "phpcs",
-        "drupal-scaffold": "\\DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
         "prepare": "\\Cheppers\\DrupalExtensionDev\\Composer\\Scripts::prepare",
         "drupal:install": "\\Cheppers\\DrupalExtensionDev\\Composer\\Scripts::drupalInstall",
         "http:start": "echo 'cd docroot && php -S localhost:8888 .ht.router.php'",
@@ -147,7 +198,7 @@
         "clean:reports": "[ ! -d ./reports/ ] || find ./reports/ -mindepth 1 -maxdepth 1 -exec rm -rf {} \\;",
         "clean:composer": [
             "rm -rf bin/ reports/ vendor/",
-            "chmod -R u+w tests/fixtures/project_01/docroot/",
+            "[ ! -d tests/fixtures/project_01/docroot/ ] || chmod -R u+w tests/fixtures/project_01/docroot/",
             "git clean --force -d -x -- tests/",
             "git clean --force -d -X -- tests/"
         ]

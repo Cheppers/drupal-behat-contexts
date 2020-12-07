@@ -1,0 +1,5 @@
+
+default:
+    formatters:
+        junit:
+            output_path: '../../../../reports/machine/junit/behat'

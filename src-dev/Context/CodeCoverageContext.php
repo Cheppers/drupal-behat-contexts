@@ -9,6 +9,10 @@ use Behat\Behat\Hook\Scope\FeatureScope;
 use Behat\Gherkin\Node\FeatureNode;
 use NuvoleWeb\Drupal\DrupalExtension\Context\RawMinkContext;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
+use SebastianBergmann\CodeCoverage\Driver\Selector as CodeCoverageDriverSelector;
+use SebastianBergmann\CodeCoverage\Filter as CodeCoverageFilter;
+use SebastianBergmann\CodeCoverage\Report\Clover as CloverReporter;
+use SebastianBergmann\CodeCoverage\Report\Html\Facade as FacadeReporter;
 use Symfony\Component\Filesystem\Filesystem;
 
 class CodeCoverageContext extends RawMinkContext
@@ -109,14 +113,19 @@ class CodeCoverageContext extends RawMinkContext
             return $this;
         }
 
-        $this->coverage = new CodeCoverage;
+        $filter = new CodeCoverageFilter();
+        foreach ($this->getWhitelistedDirs() as $whitelistedDir) {
+            $filter->includeDirectory($whitelistedDir);
+        }
+
+        $this->coverage = new CodeCoverage(
+            (new CodeCoverageDriverSelector())->forLineCoverage($filter),
+            $filter
+        );
 
         $feature = $scope->getFeature();
         $featureName = static::getFeatureName($feature);
 
-        foreach ($this->getWhitelistedDirs() as $whitelistedDir) {
-            $this->coverage->filter()->addDirectoryToWhitelist($whitelistedDir);
-        }
         $this->coverage->start($featureName);
 
         return $this;
@@ -136,11 +145,23 @@ class CodeCoverageContext extends RawMinkContext
         $scenarioLine = $scope->getScenario()->getLine();
 
         $reportsDirs = static::getReportsDirByReaders($scope);
-        $writer = new \SebastianBergmann\CodeCoverage\Report\Clover;
-        $writer->process($this->coverage, "{$reportsDirs['machine']}/$scenarioLine.xml");
+        $this
+            ->coverageStopClover("{$reportsDirs['machine']}/$scenarioLine.xml")
+            ->coverageStopFacade("{$reportsDirs['human']}/$scenarioLine");
 
-        $writer = new \SebastianBergmann\CodeCoverage\Report\Html\Facade;
-        $writer->process($this->coverage, "{$reportsDirs['human']}/$scenarioLine");
+        return $this;
+    }
+
+    protected function coverageStopClover(string $dstFile) {
+        $reporter = new CloverReporter();
+        $reporter->process($this->coverage, $dstFile);
+
+        return $this;
+    }
+
+    protected function coverageStopFacade(string $dstDir) {
+        $reporter = new FacadeReporter();
+        $reporter->process($this->coverage, $dstDir);
 
         return $this;
     }

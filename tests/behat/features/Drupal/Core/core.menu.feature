@@ -1,6 +1,7 @@
+@api
+@javascript
 Feature: Test steps from \Cheppers\DrupalExtension\Context\Drupal\CoreMenu
 
-    @api @javascript
     Scenario: Assert menu links
         Given I am logged in as a user with the "Administrator" role
         And I am on the homepage

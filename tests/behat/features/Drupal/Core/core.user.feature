@@ -1,6 +1,7 @@
+@api
+@javascript
 Feature: Test user module related features
 
-    @api @javascript
     Scenario: User create
         Given user:
             | name | a1                 |
@@ -9,7 +10,6 @@ Feature: Test user module related features
         When I am on "/admin/people"
         Then I should see the text "a1"
 
-    @api @javascript
     Scenario: User delete
         Given user:
             | name | a1                 |

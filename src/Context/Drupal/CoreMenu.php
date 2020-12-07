@@ -18,7 +18,7 @@ class CoreMenu extends Base
     {
         parent::initFinders();
 
-        $wrapperLocator = '//nav[@role="navigation"]/*[text() = "{{ menuLabel }}"]/parent::*';
+        $wrapperLocator = '//nav[@role="navigation"]/*[normalize-space(text()) = "{{ menuLabel }}"]/parent::*';
 
         $this->finders += [
             'drupal.core.menu.wrapper' => [

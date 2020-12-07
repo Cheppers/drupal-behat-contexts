@@ -11,8 +11,8 @@ class FeatureContext extends Base
      */
     public function beforeScenarioJavascriptWindowSize()
     {
-        $this
-            ->getSession()
-            ->resizeWindow(1440, 1080);
+        //$this
+        //    ->getSession()
+        //    ->resizeWindow(1440, 1080);
     }
 }

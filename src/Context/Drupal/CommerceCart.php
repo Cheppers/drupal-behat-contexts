@@ -27,7 +27,7 @@ class CommerceCart extends Base
             ],
             'drupal.commerce_cart.row_by_order_item_title' => [
                 'selector' => 'xpath',
-                'locator' => '//a[text() = "{{ title }}"]/ancestor::div[@class="cart-row container-wrapper"]',
+                'locator' => '//a[normalize-space(text()) = "{{ title }}"]/ancestor::div[@class="cart-row container-wrapper"]',
             ],
             'drupal.commerce_cart.block.number_of_items' => [
                 'selector' => 'xpath',

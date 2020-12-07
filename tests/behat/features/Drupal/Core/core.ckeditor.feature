@@ -1,6 +1,7 @@
+@api
+@javascript
 Feature: Test steps in \Cheppers\DrupalExtension\Context\Drupal\CoreCkeditor
 
-  @api @javascript
   Scenario: Fill in a wysiwyg field
     Given I am logged in as a user with the "Administrator" role
     And I am on "/node/add/article"
