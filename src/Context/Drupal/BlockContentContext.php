@@ -6,7 +6,6 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Cheppers\DrupalExtension\Context\Base;
-use Drupal\block_content\BlockContentInterface;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Entity\EntityInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -14,12 +13,6 @@ use Webmozart\Assert\Assert;
 
 class BlockContentContext extends Base
 {
-    /**
-     * Keep track of block contents so they can be cleaned up.
-     *
-     * @var array
-     */
-    protected $blockContents = [];
 
     /**
      * Creates block content of a given type provided in the form:
@@ -29,13 +22,31 @@ class BlockContentContext extends Base
      *
      * @Given :type block content:
      */
-    public function createBlockContents($type, TableNode $blockContentsTable)
+    public function doCreateBlockContents($type, TableNode $blockContentsTable)
     {
         foreach ($blockContentsTable->getHash() as $blockContentHash) {
             $blockContent = (object) $blockContentHash;
             $blockContent->type = $type;
-            $this->blockContentCreate($blockContent);
+            $this->assertBlockContentCreate($blockContent);
         }
+    }
+
+    /**
+     * Create block content defined in YAML format.
+     *
+     * @param \Behat\Gherkin\Node\PyStringNode $string
+     *   The text in yaml format that represents the content.
+     *
+     * @Given the following block content:
+     */
+    public function doCreateBlockContent(PyStringNode $string)
+    {
+        $values = $this->assertSanitizeYaml($string);
+        $message = __METHOD__ . ": Required fields 'info' and 'type' not found.";
+        Assert::keyExists($values, 'info', $message);
+        Assert::keyExists($values, 'type', $message);
+        $block = $this->getCore()->entityCreate('block_content', $values);
+        $this->blockContents[] = $block;
     }
 
     /**
@@ -49,9 +60,9 @@ class BlockContentContext extends Base
      * @Given I am visiting the :type block content :info
      * @Given I visit the :type block content :info
      */
-    public function iAmViewingTheBlockContent(string $type, string $info)
+    public function doVisitTheBlockContent(string $type, string $info)
     {
-        $this->visitBlockContentPage('view', $type, $info);
+        $this->assertVisitBlockContentPage('view', $type, $info);
     }
 
     /**
@@ -65,9 +76,9 @@ class BlockContentContext extends Base
      * @Given I am editing the :type block content :info
      * @Given I edit the :type block content :info
      */
-    public function iAmEditingTheBlockContent(string $type, string $info)
+    public function doEditTheBlockContent(string $type, string $info)
     {
-        $this->visitBlockContentPage('edit', $type, $info);
+        $this->assertVisitBlockContentPage('edit', $type, $info);
     }
 
     /**
@@ -81,33 +92,9 @@ class BlockContentContext extends Base
      * @Given I am deleting the :type block content :info
      * @Given I delete the :type block content :info
      */
-    public function iAmDeletingTheBlockContent(string $type, string $info)
+    public function doDeleteTheBlockContent(string $type, string $info)
     {
-        $this->visitBlockContentPage('delete', $type, $info);
-    }
-
-    /**
-     * Provides a common step definition callback for block contents.
-     *
-     * @param string $op
-     *   The operation being performed: 'view', 'edit', 'delete'.
-     * @param string $type
-     *   The block content type id.
-     * @param string $info
-     *   The block content info.
-     */
-    protected function visitBlockContentPage(
-        string $op,
-        string $type,
-        string $info
-    ) {
-        $bid = $this->getBlockContentIdByInfo($type, $info);
-        $path = [
-            'view' => "block/$bid",
-            'edit' => "block/$bid/edit",
-            'delete' => "block/$bid/delete",
-        ];
-        $this->visitPath($path[$op]);
+        $this->assertVisitBlockContentPage('delete', $type, $info);
     }
 
     /**
@@ -126,15 +113,15 @@ class BlockContentContext extends Base
      * @Then :name can :op block content :info
      * @Then :name can :op :info block content
      */
-    public function userCanBlockContent(
+    public function doUserCanBlockContent(
         string $name,
         string $op,
         string $info
     ) {
         $op = strtr($op, ['edit' => 'update']);
 
-        $block = $this->loadBlockContentByInfo($info);
-        $access = $this->blockContentAccess($op, $name, $block);
+        $block = $this->assertLoadBlockContentByInfo($info);
+        $access = $this->assertBlockContentAccess($op, $name, $block);
         if (!$access) {
             throw new \Exception("{$name} cannot {$op} '{$info}' but it is supposed to.");
         }
@@ -157,14 +144,14 @@ class BlockContentContext extends Base
      * @Then :name cannot :op block content :info
      * @Then :name cannot :op :info block content
      */
-    public function userCanNotBlockContent(
+    public function doUserCanNotBlockContent(
         string $name,
         string $op,
         string $info
     ) {
         $op = strtr($op, ['edit' => 'update']);
-        $block = $this->loadBlockContentByInfo($info);
-        $access = $this->blockContentAccess($op, $name, $block);
+        $block = $this->assertLoadBlockContentByInfo($info);
+        $access = $this->assertBlockContentAccess($op, $name, $block);
         if ($access) {
             throw new \Exception("{$name} can {$op} '{$info}' but it is not supposed to.");
         }
@@ -186,12 +173,12 @@ class BlockContentContext extends Base
      * @Then I should see the link :link to :operation block content :info
      * @Then I should see a link :link to :operation block content :info
      */
-    public function assertBlockContentOperationLink(
+    public function doBlockContentOperationLink(
         string $link,
         string $operation,
         string $info
     ) {
-        if (!$this->getBlockContentOperationLink($link, $operation, $info)) {
+        if (!$this->assertGetBlockContentOperationLink($link, $operation, $info)) {
             throw new ExpectationException(
                 "No '$link' link to '$operation' '$info' has been found.",
                 $this->getSession()
@@ -213,11 +200,11 @@ class BlockContentContext extends Base
      * @Then I should not see a link to :operation content :info
      * @Then I should not see the link to :operation content :info
      */
-    public function assertNoBlockContentOperationLink(
+    public function doNoBlockContentOperationLink(
         string $info,
         string $operation
     ) {
-        if ($this->getBlockContentOperationLink('', $operation, $info)) {
+        if ($this->assertGetBlockContentOperationLink('', $operation, $info)) {
             throw new ExpectationException("link to '$operation' '$info' has been found.", $this->getSession());
         }
     }
@@ -235,31 +222,13 @@ class BlockContentContext extends Base
      * @return bool
      *   TRUE if user can perform operation, FALSE otherwise.
      */
-    public function blockContentAccess(
+    public function assertBlockContentAccess(
         string $op,
         string $name,
         object $block
     ): bool {
         $account = $this->getCore()->loadUserByName($name);
         return $block->access($op, $account);
-    }
-
-    /**
-     * Create block content defined in YAML format.
-     *
-     * @param \Behat\Gherkin\Node\PyStringNode $string
-     *   The text in yaml format that represents the content.
-     *
-     * @Given the following block content:
-     */
-    public function assertBlockContent(PyStringNode $string)
-    {
-        $values = $this->sanitizeYaml($string);
-        $message = __METHOD__ . ": Required fields 'info' and 'type' not found.";
-        Assert::keyExists($values, 'info', $message);
-        Assert::keyExists($values, 'type', $message);
-        $block = $this->getCore()->entityCreate('block_content', $values);
-        $this->blockContents[] = $block;
     }
 
     /**
@@ -273,7 +242,7 @@ class BlockContentContext extends Base
      *
      * @throws \Drupal\Core\Entity\EntityStorageException
      */
-    protected function blockContentCreate(\stdClass $blockContent)
+    protected function assertBlockContentCreate(\stdClass $blockContent)
     {
         // Throw an exception if the node type is missing or does not exist.
         if (!isset($blockContent->type) || !$blockContent->type) {
@@ -281,8 +250,8 @@ class BlockContentContext extends Base
         }
 
         /** @var \Drupal\Core\Entity\EntityTypeBundleInfo $bundle_info */
-        $bundle_info = \Drupal::service('entity_type.bundle.info');
-        $bundles = $bundle_info->getBundleInfo('block_content');
+        $bundleInfo = \Drupal::service('entity_type.bundle.info');
+        $bundles = $bundleInfo->getBundleInfo('block_content');
         if (!in_array($blockContent->type, array_keys($bundles))) {
             throw new \Exception(
                 "Cannot create block content because provided block content type '$blockContent->type' does not exist."
@@ -302,6 +271,30 @@ class BlockContentContext extends Base
     }
 
     /**
+     * Provides a common step definition callback for block contents.
+     *
+     * @param string $op
+     *   The operation being performed: 'view', 'edit', 'delete'.
+     * @param string $type
+     *   The block content type id.
+     * @param string $info
+     *   The block content info.
+     */
+    protected function assertVisitBlockContentPage(
+        string $op,
+        string $type,
+        string $info
+    ) {
+        $bid = $this->assertGetBlockContentIdByInfo($type, $info);
+        $path = [
+            'view' => "block/$bid",
+            'edit' => "block/$bid/edit",
+            'delete' => "block/$bid/delete",
+        ];
+        $this->visitPath($path[$op]);
+    }
+
+    /**
      * Get the edit link for a block.
      *
      * @param string $link
@@ -316,12 +309,12 @@ class BlockContentContext extends Base
      *
      * @throws \Exception
      */
-    protected function getBlockContentOperationLink(
+    protected function assertGetBlockContentOperationLink(
         string $link,
         string $operation,
         string $info
     ): ?string {
-        $block = $this->loadBlockContentByInfo($info);
+        $block = $this->assertLoadBlockContentByInfo($info);
         $element = $this->getSession()->getPage();
         $locator = ($link ? ['link', sprintf("'%s'", $link)] : ['link', "."]);
         $links = $element->findAll('named', $locator);
@@ -348,7 +341,7 @@ class BlockContentContext extends Base
      * @throws \Exception
      *   Thrown when no block content with the given info can be loaded.
      */
-    public function loadBlockContentByInfo(string $info): ?EntityInterface
+    public function assertLoadBlockContentByInfo(string $info): ?EntityInterface
     {
         $result = \Drupal::entityQuery('block_content')
             ->condition('info', $info)
@@ -360,38 +353,6 @@ class BlockContentContext extends Base
     }
 
     /**
-     * Remove any created block contents.
-     *
-     * @AfterScenario
-     */
-    protected function cleanBlockContents()
-    {
-        foreach ($this->blockContents as $blockContent) {
-            $this->blockContentDelete($blockContent);
-        }
-        $this->blockContents = [];
-    }
-
-    /**
-     * Deletes any block content given.
-     *
-     * @param $blockContent
-     *   The block content entity.
-     *
-     * @throws \Drupal\Core\Entity\EntityStorageException
-     *   Throws exception when the block content does not exist.
-     */
-    protected function blockContentDelete($blockContent)
-    {
-        $blockContent = $blockContent instanceof BlockContentInterface
-            ? $blockContent
-            : BlockContent::load($blockContent->id);
-        if ($blockContent instanceof BlockContentInterface) {
-            $blockContent->delete();
-        }
-    }
-
-    /**
      * Sanitize then parse a string.
      *
      * @param \Behat\Gherkin\Node\PyStringNode $node
@@ -400,15 +361,15 @@ class BlockContentContext extends Base
      * @return mixed
      *   The YAML converted to a PHP value.
      */
-    protected function sanitizeYaml(PyStringNode $node)
+    protected function assertSanitizeYaml(PyStringNode $node)
     {
         // Sanitize PyString test by removing initial indentation spaces.
         $strings = $node->getStrings();
         if ($strings) {
             preg_match('/^(\s+)/', $strings[0], $matches);
-            $indentation_size = isset($matches[1]) ? strlen($matches[1]) : 0;
+            $indentationSize = isset($matches[1]) ? strlen($matches[1]) : 0;
             foreach ($strings as $key => $string) {
-                $strings[$key] = substr($string, $indentation_size);
+                $strings[$key] = substr($string, $indentationSize);
             }
         }
         $raw = implode("\n", $strings);
@@ -426,11 +387,11 @@ class BlockContentContext extends Base
      * @return mixed|null
      *   Returns the block content if found.
      */
-    protected function getBlockContentIdByInfo(
+    protected function assertGetBlockContentIdByInfo(
         string $type,
         string $info
     ) {
-        $result = $this->findBlockContentByInfo($type, $info);
+        $result = $this->assertFindBlockContentByInfo($type, $info);
         Assert::notNull($result, __METHOD__ . ": No Block content with info {$info} found.");
         return $result;
     }
@@ -449,7 +410,7 @@ class BlockContentContext extends Base
      * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
      * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
      */
-    protected function findBlockContentByInfo(string $type, string $info)
+    protected function assertFindBlockContentByInfo(string $type, string $info)
     {
         $storage = \Drupal::entityTypeManager()->getStorage('block_content');
         $result = $storage
