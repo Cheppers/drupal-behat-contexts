@@ -1,6 +1,7 @@
+@api
+@javascript
 Feature: Test steps in \Cheppers\DrupalExtension\Context\Drupal\CoreTabs
 
-    @api @javascript
     Scenario: Assert steps
         Given I am logged in as a user with the "Administrator" role
         And I am on the homepage
@@ -9,7 +10,6 @@ Feature: Test steps in \Cheppers\DrupalExtension\Context\Drupal\CoreTabs
             | View (active tab) |
             | Edit              |
 
-    @api @javascript
     Scenario: Some helpful description.
       Given I am an anonymous user
       And I am on the homepage

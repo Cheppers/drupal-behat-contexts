@@ -1,6 +1,8 @@
+@api
+@javascript
 Feature: Test steps in \Cheppers\DrupalExtension\Context\Table
 
-    @api @javascript
+    @knownBug
     Scenario: Click on link
         Given I am logged in as a user with the "Administrator" role
         And "page" content:

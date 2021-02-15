@@ -156,7 +156,7 @@ class AppContentEntitySetupTearDown extends Base
 
             if ($entityId === null) {
                 $storage->resetCache();
-                $storage->delete($storage->loadMultiple(null));
+                $storage->delete($storage->loadMultiple());
 
                 continue;
             }

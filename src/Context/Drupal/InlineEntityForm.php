@@ -23,7 +23,7 @@ class InlineEntityForm extends Base
         $this->finders += [
             'drupal.inline_entity_form.action_buttons' => [
                 'selector' => 'xpath',
-                'locator' => '//tbody/tr/td[text() = "{{ entityLabel }}"]/ancestor::tr//button'
+                'locator' => '//tbody/tr/td[normalize-space(text()) = "{{ entityLabel }}"]/ancestor::tr//button'
             ],
         ];
 

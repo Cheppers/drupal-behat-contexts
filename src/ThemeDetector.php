@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Cheppers\DrupalExtension;
+
+use Behat\Mink\Session;
 
 class ThemeDetector implements ThemeDetectorInterface
 {
@@ -14,7 +18,7 @@ class ThemeDetector implements ThemeDetectorInterface
      *
      * @todo The current detection method is not bulletproof.
      */
-    public function getCurrentThemeName(\Behat\Mink\Session $session): string
+    public function getCurrentThemeName(Session $session): string
     {
         $this->session = $session;
 
@@ -51,6 +55,7 @@ class ThemeDetector implements ThemeDetectorInterface
             return '';
         }
 
+        // @todo Check "files" directory.
         $hrefParts = explode('/', trim($href, '/'));
         array_pop($hrefParts);
 
@@ -60,11 +65,14 @@ class ThemeDetector implements ThemeDetectorInterface
     protected function getCurrentThemeNameByAjaxPageState(): string
     {
         $js = <<< JS
-if (typeof drupalSettings !== 'undefined' && drupalSettings.hasOwnProperty('ajaxPageState')) {
-    return drupalSettings.ajaxPageState.theme;
+if (typeof drupalSettings == 'undefined'
+  || !drupalSettings.hasOwnProperty('ajaxPageState')
+  || !drupalSettings.ajaxPageState.hasOwnProperty('theme')
+) {
+    return '';
 }
 
-return '';
+return drupalSettings.ajaxPageState.theme;
 JS;
 
         return (string) $this->session->evaluateScript($js);
@@ -72,6 +80,7 @@ JS;
 
     protected function getCurrentThemeNameByLogo(): string
     {
+        // @todo Drupal is installed in a subdirectory.
         $xpathQuery = '//a[@href="/"]/img[contains(@src, "/logo.svg")]';
 
         $page = $this->session->getPage();

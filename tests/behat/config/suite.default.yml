@@ -3,9 +3,9 @@ default:
     suites:
         default:
             contexts:
-                - '\Cheppers\DrupalExtensionDev\Context\CodeCoverageContext'
+#                - '\Cheppers\DrupalExtensionDev\Context\CodeCoverageContext'
 #                - '\Cheppers\DrupalExtensionDev\Context\FeatureContext'
-                - '\Cheppers\DrupalExtension\Context\Drupal\BlockContentContext'
+                - '\Cheppers\DrupalExtensionDev\Context\CodeCoverageContext'
                 - '\Drupal\DrupalExtension\Context\MinkContext'
                 - '\Drupal\DrupalExtension\Context\DrupalContext'
                 - '\NuvoleWeb\Drupal\DrupalExtension\Context\DrupalContext'
