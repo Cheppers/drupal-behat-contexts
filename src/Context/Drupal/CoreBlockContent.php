@@ -169,11 +169,8 @@ class CoreBlockContent extends Base
         string $operation,
         string $info
     ) {
-        $url = $this->getContentEntityUrlByLabel(
-            'block_content',
-            $info,
-            $operation
-        );
+        $block = $this->getContentEntityByLabel('block_content', $info);
+        $url = $this->getContentEntityOperationLink($block, $op);
         if (!$url) {
             throw new ExpectationException(
                 "No link to '$operation' '$info' has been found.",
@@ -193,18 +190,15 @@ class CoreBlockContent extends Base
      * @throws \Behat\Mink\Exception\ExpectationException|\Exception
      *    If link for operation has been found.
      *
-     * @Then I should not see a link to :operation block content :info
-     * @Then I should not see the link to :operation block content :info
+     * @Then I should not see the :operation link to block content :info
+     * @Then I should not see a :operation link to block content :info
      */
     public function doShouldNotSeeBlockContentOperationLink(
         string $info,
         string $operation
     ) {
-        $url = $this->getContentEntityUrlByLabel(
-            'block_content',
-            $info,
-            $operation
-        );
+        $block = $this->getContentEntityByLabel('block_content', $info);
+        $url = $this->getContentEntityOperationLink($block, $op);
         if ($url) {
             throw new ExpectationException("link to '$operation' '$info' has been found.", $this->getSession());
         }
