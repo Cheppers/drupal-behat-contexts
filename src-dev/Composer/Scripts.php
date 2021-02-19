@@ -119,11 +119,18 @@ PHP;
         $cmdPattern[] = "$drushBase php:eval %s";
         $cmdArgs[] = escapeshellarg($createMenuLinkContent);
 
+        $cmdPattern[] = '&&';
+        $cmdPattern[] = "$drushBase cache:rebuild";
+
         $command = vsprintf(implode(' ', $cmdPattern), $cmdArgs);
         $this->event->getIO()->write($command);
 
         $process = new Process(
-            $command,
+            [
+                getenv('SHELL') ?: '/bin/bash',
+                '-c',
+                $command,
+            ],
             $this->projectRoot,
             null,
             null,
@@ -164,6 +171,11 @@ PHP;
     protected function prepareDrupalSettingsPhp()
     {
         $sitesDirPath = static::getSitesDirPath();
+        $this->fs->copy(
+            "{$sitesDirPath}/default.settings.php",
+            "{$sitesDirPath}/settings.php",
+        );
+
         $fileName = "$sitesDirPath/settings.php";
 
         $replacePairs = [];

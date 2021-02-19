@@ -8,7 +8,6 @@ use Behat\Mink\Exception\ExpectationException;
 use Cheppers\DrupalExtension\Component\Drupal\CoreContentEntityContextTrait;
 use Cheppers\DrupalExtension\Context\Base;
 use Symfony\Component\Yaml\Yaml;
-use Webmozart\Assert\Assert;
 
 class CoreBlockContent extends Base
 {
@@ -17,40 +16,18 @@ class CoreBlockContent extends Base
 
     /**
      * Creates block content of a given type provided in the form:
-     * | info           |
-     * | My block label |
-     * | ...            |
+     * | type | my_bundle_01   |
+     * | info | My block label |
      *
-     * @param string $type
-     *   The block content type.
-     * @param \Behat\Gherkin\Node\TableNode $blockContentsTable
-     *   The block content field values.
-     *
-     * @Given :type block content:
+     * @Given block_content:
      */
-    public function doCreateBlockContents(string $type, TableNode $blockContentsTable)
+    public function doCreateBlockContents(TableNode $fieldValues)
     {
-        foreach ($blockContentsTable->getHash() as $blockContent) {
-            $blockContent['type'] = $type;
-            $this->createContentEntity('block_content', $blockContent);
-        }
-    }
+        $entityTypeId = 'block_content';
+        $fieldValues = $fieldValues->getRowsHash();
+        $fieldValues = $this->keyValuePairsToNestedArray($fieldValues);
 
-    /**
-     * Create block content defined in YAML format.
-     *
-     * @param \Behat\Gherkin\Node\PyStringNode $string
-     *   The text in yaml format that represents the content.
-     *
-     * @Given the following block content:
-     */
-    public function doCreateBlockContent(PyStringNode $string)
-    {
-        $values = $this->doSanitizeYaml($string);
-        $message = __METHOD__ . ": Required fields 'info' and 'type' not found.";
-        Assert::keyExists($values, 'info', $message);
-        Assert::keyExists($values, 'type', $message);
-        $this->getCore()->entityCreate('block_content', $values);
+        $this->createContentEntity($entityTypeId, $fieldValues);
     }
 
     /**
