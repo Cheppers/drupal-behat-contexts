@@ -2,7 +2,6 @@
 @javascript
 Feature: Test steps in \Cheppers\DrupalExtension\Context\Drupal\CoreVerticalTabs
 
-    @ezt
     Scenario: Bar
         Given I am logged in as a user with the "Administrator" role
         And I am at "/"

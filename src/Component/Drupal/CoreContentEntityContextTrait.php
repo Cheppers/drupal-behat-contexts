@@ -3,6 +3,7 @@
 namespace Cheppers\DrupalExtension\Component\Drupal;
 
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 
 trait CoreContentEntityContextTrait
@@ -23,9 +24,7 @@ trait CoreContentEntityContextTrait
                     break;
 
                 default:
-                    $fieldName = $etm
-                        ->getDefinition($entityTypeId)
-                        ->getKey('label');
+                    $fieldName = $entityType->getKey('label');
                     break;
             }
         }
@@ -64,6 +63,32 @@ trait CoreContentEntityContextTrait
         return $entity
             ->toUrl($relation, $options)
             ->toString();
+    }
+
+    protected function getContentEntityOperationLink(
+        EntityInterface $entity,
+        $operation
+    ) {
+        /** @var \Behat\Mink\Element\DocumentElement $element */
+        $element = $this->getSession()->getPage();
+        $locator = ($operation ? ['link', sprintf("'%s'", $operation)] : ['link', "."]);
+
+        $replacementPairs = [
+            'edit' => 'edit-form',
+            'delete' => 'delete-form',
+        ];
+        $op = strtr($operation, $replacementPairs);
+        /** @var \Behat\Mink\Element\NodeElement[] $links */
+        $links = $element->findAll('named', $locator);
+        // Loop over all the links on the page and check for the entity
+        // operation path.
+        foreach ($links as $result) {
+            $target = $result->getAttribute('href');
+            if (strpos($target, $entity->toUrl($op)->setAbsolute(FALSE)->toString()) !== FALSE) {
+                return $result;
+            }
+        }
+        return NULL;
     }
 
     protected function createContentEntity(

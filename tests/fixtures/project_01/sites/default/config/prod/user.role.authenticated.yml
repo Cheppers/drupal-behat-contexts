@@ -1,9 +1,9 @@
-uuid: 3a931262-7df7-45e9-8592-c23ff2a61d23
+uuid: dc7afe09-f2d5-44e9-9cf7-8629fc1cab11
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: dJ0L2DNSj5q6XVZAGsuVDpJTh5UeYkIPwKrUOOpr8YI
+  default_config_hash: btW6TFHajhy7Eo6YUvdFiPh4TcPggo8GBXYctjV6zag
 id: authenticated
 label: 'Authenticated user'
 weight: 1
@@ -11,6 +11,7 @@ is_admin: false
 permissions:
   - 'access comments'
   - 'access content'
+  - 'access shortcuts'
   - 'access site-wide contact form'
   - 'post comments'
   - 'search content'
