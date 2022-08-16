@@ -111,6 +111,7 @@ class AppContentEntitySetupTearDown extends Base
             $ids = $etm
                 ->getStorage($entityType->id())
                 ->getQuery()
+                ->accessCheck(FALSE)
                 ->sort($entityType->getKey('id'), 'DESC')
                 ->range(0, 1)
                 ->execute();
