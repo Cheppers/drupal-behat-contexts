@@ -1,12 +1,14 @@
 
 default:
     extensions:
-        Behat\MinkExtension:
+#       Behat\MinkExtension:
+        Drupal\MinkExtension:
             files_path: '%paths.base%/media'
             base_url: 'http://localhost:8888'
             browser_name: 'chrome'
             default_session: 'goutte'
             javascript_session: 'browserChrome'
+            #ajax_timeout: 15
             goutte: ~
             sessions:
                 default:
@@ -14,3 +16,4 @@ default:
                 browserChrome:
                     chrome:
                         api_url: 'http://127.0.0.1:9222'
+                        #socket_timeout: 60

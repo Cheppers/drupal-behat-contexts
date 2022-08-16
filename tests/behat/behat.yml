@@ -2,9 +2,9 @@
 imports:
     - './config/extension.chrome.yml'
     - './config/extension.drupal.yml'
-    - './config/extension.junit.yml'
     - './config/extension.mink.yml'
     - './config/extension.screenshot.yml'
+    - './config/formatters.junit.yml'
     - './config/formatters.pretty.yml'
     - './config/suite.default.yml'
     - './behat.local.yml'
@@ -12,7 +12,8 @@ imports:
 default:
     testers:
         strict: true
-        rerun_cache: '../../tmp/behat_rerun_cache'
+        # Relative path from "tests/fixtures/project_01/docroot".
+        rerun_cache: '../../../../tmp/behat_rerun_cache'
 
     exceptions:
         verbosity: 4

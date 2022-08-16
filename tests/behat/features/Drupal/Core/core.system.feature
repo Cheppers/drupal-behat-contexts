@@ -1,6 +1,8 @@
+@api
+@javascript
 Feature: Test steps in \Cheppers\DrupalExtension\Context\Drupal\CoreCache
 
-    @api @javascript @apiMaintenanceModeOff
+    @apiMaintenanceModeOff
     Scenario: Use maintenance mode as an anonymous user
         Given I am on the homepage
         And the site is in maintenance mode

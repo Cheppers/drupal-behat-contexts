@@ -20,12 +20,12 @@ class CoreVerticalTabs extends Base
                 'locator' => sprintf(
                     '//div[%s and %s]',
                     'contains(@class, "form-type-vertical-tabs")',
-                    'descendant::label[text() = "{{ label }}"]'
+                    'descendant::label[normalize-space(text()) = "{{ label }}"]'
                 ),
             ],
             'drupal.core.vertical_tabs.tab_by_label' => [
                 'selector' => 'xpath',
-                'locator' => '//li/a/*[@class = "vertical-tabs__menu-item-title" and text() = "{{ label }}"]',
+                'locator' => '//li/a/*[@class = "vertical-tabs__menu-item-title" and normalize-space(text()) = "{{ label }}"]',
             ],
             'drupal.core.vertical_tabs.tab_labels' => [
                 'selector' => 'xpath',
