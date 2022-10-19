@@ -153,7 +153,7 @@ class AppContentEntitySetupTearDown extends Base
             $entityType = $etm->getDefinition($entityTypeId);
             $storage = $etm->getStorage($entityTypeId);
 
-            $query = $storage->getQuery();
+            $query = $storage->getQuery()->accessCheck(FALSE);
 
             if ($entityId === null) {
                 $storage->resetCache();
