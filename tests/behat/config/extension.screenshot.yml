@@ -1,8 +1,8 @@
 
 default:
     extensions:
-        Bex\Behat\ScreenshotExtension:
-            screenshot_taking_mode: 'failed_steps'
-            image_drivers:
-                local:
-                    screenshot_directory: '../../../../reports/human/behat/screenshots'
+        DrevOps\BehatScreenshotExtension:
+            dir: '../../../../reports/human/behat/screenshots'
+            fail: true
+            fail_prefix: 'failed_'
+            purge: false
