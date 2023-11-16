@@ -40,9 +40,23 @@ class CoreCkeditor extends Base
         $fieldIdSafe = addslashes($fieldId);
         $newValueSafe = addslashes($newValue);
 
+        $editor = "div.js-form-item-$fieldIdSafe-0-value .ck-editor__editable";
+
         $this
             ->getSession()
-            ->executeScript("CKEDITOR.instances['{$fieldIdSafe}'].setData('{$newValueSafe}');");
+            ->executeScript("
+      var domEditableElement = document.querySelector(\"$editor\");
+      if (domEditableElement.CKEditorInstance) {
+        const editorInstance = domEditableElement.CKEditorInstance;
+        if (editorInstance) {
+          editorInstance.setData(\"$newValueSafe\");
+        } else {
+          throw new Exception('Could not get the editor instance!');
+        }
+      } else {
+        throw new Exception('Could not find the element!');
+      }
+      ");
 
         return $this;
     }

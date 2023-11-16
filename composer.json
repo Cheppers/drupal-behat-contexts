@@ -33,7 +33,10 @@
         "ext-pcre": "*",
         "behat/mink-goutte-driver": "^2.0",
         "cweagans/composer-patches": "^1.7",
+        "drupal/bartik-bartik": "^1.0",
+        "drupal/classy": "^1.0",
         "drupal/drupal-extension": "~5.0",
+        "drupal/seven": "^1.0",
         "nuvoleweb/drupal-behat": "^1.3",
         "phpunit/phpunit": "^10.4",
         "webmozart/path-util": "^2.3"

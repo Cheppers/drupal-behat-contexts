@@ -104,7 +104,7 @@ PHP;
         $cmdArgs = [];
 
         $cmdPattern[] = "$drushBase site:install %s";
-        $cmdArgs[] = escapeshellarg($this->installProfile);
+        $cmdArgs[] = $this->installProfile;
         $cmdPattern[] = '--sites-subdir=%s';
         $cmdArgs[] = $this->sitesDir;
         $cmdPattern[] = '--db-url=%s';
@@ -122,13 +122,7 @@ PHP;
         $command = vsprintf(implode(' ', $cmdPattern), $cmdArgs);
         $this->event->getIO()->write($command);
 
-        $process = new Process(
-            explode(' ', $command),
-            $this->projectRoot,
-            null,
-            null,
-            null
-        );
+        $process = Process::fromShellCommandline($command, $this->projectRoot);
 
         $exitCode = $process->run($this->processCallbackWrapper);
         if ($exitCode !== 0) {
