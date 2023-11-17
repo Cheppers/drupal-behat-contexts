@@ -9,10 +9,14 @@ class CoreCkeditor extends Base
 {
 
     /**
-     * @Then I fill in wysiwyg on field :locator with :value
+     * @When I fill in wysiwyg on field :label with :value
+     * @throws \Exception
      */
-    public function doFillInWysiwygOnFieldWith(string $locator, string $value)
+    public function doFillInWysiwygOnFieldWith(string $label, string $value)
     {
+        $label = mb_strtolower($label);
+        $locator = "edit-" . $label . "-0-value";
+
         $element = $this
             ->getSession()
             ->getPage()
@@ -29,21 +33,23 @@ class CoreCkeditor extends Base
             "Could not find an ID for field with locator: '$locator'"
         );
 
-        $this->ckeditorSetData($fieldId, $value);
-    }
-
-    /**
-     * @return $this
-     */
-    protected function ckeditorSetData(string $fieldId, string $newValue)
-    {
-        $fieldIdSafe = addslashes($fieldId);
-        $newValueSafe = addslashes($newValue);
-
+        $editor = "div.js-form-item-$label-0-value .ck-editor__editable";
         $this
             ->getSession()
-            ->executeScript("CKEDITOR.instances['{$fieldIdSafe}'].setData('{$newValueSafe}');");
-
-        return $this;
+            ->executeScript(
+                "
+                var domEditableElement = document.querySelector(\"$editor\");
+                if (domEditableElement.ckeditorInstance) {
+                  const editorInstance = domEditableElement.ckeditorInstance;
+                  if (editorInstance) {
+                    editorInstance.setData(\"$value\");
+                  } else {
+                    throw new Exception('Could not get the editor instance!');
+                  }
+                } else {
+                  throw new Exception('Could not find the element!');
+                }
+                "
+            );
     }
 }

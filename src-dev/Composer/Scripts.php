@@ -104,9 +104,9 @@ PHP;
         $cmdArgs = [];
 
         $cmdPattern[] = "$drushBase site:install %s";
-        $cmdArgs[] = escapeshellarg($this->installProfile);
+        $cmdArgs[] = $this->installProfile;
         $cmdPattern[] = '--sites-subdir=%s';
-        $cmdArgs[] = escapeshellarg($this->sitesDir);
+        $cmdArgs[] = $this->sitesDir;
         $cmdPattern[] = '--db-url=%s';
         $cmdArgs[] = escapeshellarg("sqlite://{$outerSitesDir}/databases/default.sqlite");
         $cmdPattern[] = '--account-name=%s';
@@ -122,13 +122,7 @@ PHP;
         $command = vsprintf(implode(' ', $cmdPattern), $cmdArgs);
         $this->event->getIO()->write($command);
 
-        $process = new Process(
-            $command,
-            $this->projectRoot,
-            null,
-            null,
-            null
-        );
+        $process = Process::fromShellCommandline($command, $this->projectRoot);
 
         $exitCode = $process->run($this->processCallbackWrapper);
         if ($exitCode !== 0) {
@@ -164,7 +158,7 @@ PHP;
     protected function prepareDrupalSettingsPhp()
     {
         $sitesDirPath = static::getSitesDirPath();
-        $fileName = "$sitesDirPath/settings.php";
+        $fileName = $sitesDirPath . '/settings.php';
 
         $replacePairs = [];
 
@@ -327,7 +321,6 @@ PHP;
 
     protected function prepareDrupalConfigDirectories()
     {
-        $sitesDir = $this->getSitesDirPath();
         $prodConfigDir = Path::join($this->getOuterSitesDirPath(), 'config', 'prod');
         $prodConfigDirSafe = var_export($prodConfigDir, true);
 
@@ -345,7 +338,7 @@ PHP;
 
 PHP;
 
-        $this->fileContentReplace("$sitesDir/settings.php", $replacePairs);
+        $this->fileContentReplace($this->getSitesDirPath() . '/settings.php', $replacePairs);
 
         return $this;
     }
