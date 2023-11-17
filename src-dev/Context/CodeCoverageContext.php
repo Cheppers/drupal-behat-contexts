@@ -152,14 +152,16 @@ class CodeCoverageContext extends RawMinkContext
         return $this;
     }
 
-    protected function coverageStopClover(string $dstFile) {
+    protected function coverageStopClover(string $dstFile)
+    {
         $reporter = new CloverReporter();
         $reporter->process($this->coverage, $dstFile);
 
         return $this;
     }
 
-    protected function coverageStopFacade(string $dstDir) {
+    protected function coverageStopFacade(string $dstDir)
+    {
         $reporter = new FacadeReporter();
         $reporter->process($this->coverage, $dstDir);
 

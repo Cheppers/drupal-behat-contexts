@@ -111,7 +111,7 @@ class AppContentEntitySetupTearDown extends Base
             $ids = $etm
                 ->getStorage($entityType->id())
                 ->getQuery()
-                ->accessCheck(FALSE)
+                ->accessCheck(false)
                 ->sort($entityType->getKey('id'), 'DESC')
                 ->range(0, 1)
                 ->execute();
@@ -153,7 +153,7 @@ class AppContentEntitySetupTearDown extends Base
             $entityType = $etm->getDefinition($entityTypeId);
             $storage = $etm->getStorage($entityTypeId);
 
-            $query = $storage->getQuery()->accessCheck(FALSE);
+            $query = $storage->getQuery()->accessCheck(false);
 
             if ($entityId === null) {
                 $storage->resetCache();

@@ -13,7 +13,7 @@ class CoreVerticalTabs extends Base
     protected function initFinders()
     {
         parent::initFinders();
-
+        // @codingStandardsIgnoreStart
         $this->finders += [
             'drupal.core.vertical_tabs.wrapper_by_label' => [
                 'selector' => 'xpath',
@@ -32,7 +32,7 @@ class CoreVerticalTabs extends Base
                 'locator' => '//li/a/*[@class = "vertical-tabs__menu-item-title"]',
             ],
         ];
-
+        // @codingStandardsIgnoreEnd
         return $this;
     }
 

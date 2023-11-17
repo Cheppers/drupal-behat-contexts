@@ -20,7 +20,7 @@ class CommerceCart extends Base
     protected function initFinders()
     {
         parent::initFinders();
-
+        // @codingStandardsIgnoreStart
         $this->finders += [
             'drupal.commerce_cart.quantity' => [
                 'locator' => 'Quantity',
@@ -38,7 +38,7 @@ class CommerceCart extends Base
                 'locator' => '//div[starts-with(@class, "order-total-line order-total-line__{{ line }}")]/span[2]',
             ],
         ];
-
+        // @codingStandardsIgnoreEnd
         return $this;
     }
 
