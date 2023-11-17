@@ -12,7 +12,7 @@ class CoreCkeditor extends Base
      * @When I fill in wysiwyg on field :label with :value
      * @throws \Exception
      */
-    public function fillCKEditor(string $label, string $value) {
+    public function doFillInWysiwygOnFieldWith(string $label, string $value) {
         $label = mb_strtolower($label);
         $locator = "edit-" . $label . "-0-value";
 
