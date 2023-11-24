@@ -6,7 +6,7 @@ use Composer\Script\Event;
 use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 class Scripts
 {
