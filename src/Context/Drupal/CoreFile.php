@@ -8,7 +8,7 @@ use Cheppers\DrupalExtension\Context\Base;
 use Drupal;
 use Drupal\file\FileInterface;
 use PHPUnit\Framework\Assert;
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 class CoreFile extends Base
 {
@@ -35,8 +35,10 @@ class CoreFile extends Base
             }
 
             $dstDirName = Path::getDirectory($row['uri']);
-            file_prepare_directory($dstDirName, FILE_CREATE_DIRECTORY);
-            $file = file_copy($file, $row['uri']);
+            /** @var \Drupal\Core\File\FileSystemInterface $fileSystem */
+            $fileSystem = \Drupal::service('file_system');
+            $fileSystem->prepareDirectory($dstDirName, $fileSystem::CREATE_DIRECTORY);
+            $file = $fileSystem->copy($file->getFileUri(), $row['uri'], $fileSystem::EXISTS_REPLACE);
             Assert::assertInstanceOf(
                 FileInterface::class,
                 $file,
